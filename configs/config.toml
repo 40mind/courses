@@ -1,0 +1,12 @@
+[Application]
+	Name = "courses"
+	Version = "0.0.1"
+
+[Server]
+	Port = ":8080"
+
+[DB]
+	User = "from env"
+	Password = "from env"
+	Name = "from env"
+	Driver = "postgres"
