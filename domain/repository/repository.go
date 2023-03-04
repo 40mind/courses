@@ -24,15 +24,31 @@ func New(db *sql.DB, dbConfig *models.DB) *Repository {
     }
 }
 
+func (rep *Repository) CreateDirection(ctx context.Context, name string) error {
+    query := "SELECT * FROM graduate_work.create_direction($1)"
+
+    _, err := rep.DB.ExecContext(ctx, query, name)
+    if err != nil {
+        log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
 func (rep *Repository) GetDirections(ctx context.Context) ([]models.Directions, error) {
     query := "SELECT * FROM graduate_work.get_directions()"
 
     rows, err := rep.DB.QueryContext(ctx, query)
-    if err != nil && err != sql.ErrNoRows {
+    if err != nil {
         log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
         return []models.Directions{}, fmt.Errorf(DBError)
     }
     defer rows.Close()
+
+    if err == sql.ErrNoRows {
+        return []models.Directions{}, nil
+    }
 
     var directions []models.Directions
     for rows.Next() {
@@ -60,9 +76,13 @@ func (rep *Repository) GetDirection(ctx context.Context, id int) (models.Directi
     err := row.Scan(
         &direction.Name,
     )
-    if err != nil && err != sql.ErrNoRows {
+    if err != nil {
         log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
         return models.Directions{}, fmt.Errorf(DBError)
+    }
+
+    if err == sql.ErrNoRows {
+        return models.Directions{}, nil
     }
 
     return direction, err
@@ -72,11 +92,15 @@ func (rep *Repository) GetCourses(ctx context.Context) ([]models.Courses, error)
     query := "SELECT * FROM graduate_work.get_courses()"
 
     rows, err := rep.DB.QueryContext(ctx, query)
-    if err != nil && err != sql.ErrNoRows {
+    if err != nil {
         log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
         return []models.Courses{}, fmt.Errorf(DBError)
     }
     defer rows.Close()
+
+    if err == sql.ErrNoRows {
+        return []models.Courses{}, nil
+    }
 
     var courses []models.Courses
     for rows.Next() {
@@ -120,9 +144,13 @@ func (rep *Repository) GetCourse(ctx context.Context, id int) (models.Courses, e
         &course.Price,
         &course.Info,
     )
-    if err != nil && err != sql.ErrNoRows {
+    if err != nil {
         log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
         return models.Courses{}, fmt.Errorf(DBError)
+    }
+
+    if err == sql.ErrNoRows {
+        return models.Courses{}, nil
     }
 
     return course, nil
@@ -132,11 +160,15 @@ func (rep *Repository) GetStudents(ctx context.Context) ([]models.Students, erro
     query := "SELECT * FROM graduate_work.get_students()"
 
     rows, err := rep.DB.QueryContext(ctx, query)
-    if err != nil && err != sql.ErrNoRows {
+    if err != nil {
         log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
         return []models.Students{}, fmt.Errorf(DBError)
     }
     defer rows.Close()
+
+    if err == sql.ErrNoRows {
+        return []models.Students{}, nil
+    }
 
     var students []models.Students
     for rows.Next() {
@@ -180,9 +212,13 @@ func (rep *Repository) GetStudent(ctx context.Context, id int) (models.Students,
         &student.DateOfPayment,
         &student.Course,
     )
-    if err != nil && err != sql.ErrNoRows {
+    if err != nil {
         log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
         return models.Students{}, fmt.Errorf(DBError)
+    }
+
+    if err == sql.ErrNoRows {
+        return models.Students{}, nil
     }
 
     return student, nil
@@ -223,5 +259,5 @@ func (rep *Repository) DeleteCourse(ctx context.Context, id int) error {
         return fmt.Errorf(DBError)
     }
 
-    return err
+    return nil
 }

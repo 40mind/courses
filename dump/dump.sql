@@ -15,6 +15,7 @@ create table graduate_work.courses
     class_time int not null,
     week_days varchar(60) not null,
     first_class_date timestamp not null,
+    last_class_date timestamp not null,
     price decimal not null,
     info text not null
 );
@@ -54,8 +55,8 @@ create user courses_web_app with password 'passwordforwebapp';
 grant web_app to courses_web_app;
 
 create or replace function graduate_work.get_courses()
-returns table (name varchar, direction varchar, num_of_classes int, class_time int, week_days varchar,
-first_class_date timestamp, price decimal, info text)
+    returns table (name varchar, direction varchar, num_of_classes int, class_time int, week_days varchar,
+        first_class_date timestamp, last_class_date timestamp, price decimal, info text)
 language plpgsql as
 $$
 begin
@@ -66,6 +67,7 @@ begin
                c.class_time,
                c.week_days,
                c.first_class_date,
+               c.last_class_date,
                c.price,
                c.info
         from graduate_work.courses c
@@ -75,7 +77,7 @@ $$;
 
 create or replace function graduate_work.get_course(_id int)
     returns table (name varchar, direction varchar, num_of_classes int, class_time int, week_days varchar,
-                   first_class_date timestamp, price decimal, info text)
+                   first_class_date timestamp, last_class_date timestamp, price decimal, info text)
     language plpgsql as
 $$
 begin
@@ -86,6 +88,7 @@ begin
                c.class_time,
                c.week_days,
                c.first_class_date,
+               c.last_class_date,
                c.price,
                c.info
         from graduate_work.courses c
@@ -286,7 +289,7 @@ insert into graduate_work.directions(name) values
    ('Обучение'),
    ('Повышение');
 
-insert into graduate_work.courses(name, direction, num_of_classes, class_time, week_days, first_class_date, price, info) values
-    ('Переводчик',1,10,90,'Понедельник, Среда', '2022-10-15 15:00:00', 30000, 'Курсы для переводчиков'),
-    ('Физика',2,20,45,'Понедельник, Пятница', '2022-10-10 12:00:00', 45000, 'Курсы по физике для школьников'),
-    ('Готовка',3,5,100,'Понедельник', '2022-10-20 18:00:00', 10000, 'Курсы для повышения навыков готовки');
+insert into graduate_work.courses(name, direction, num_of_classes, class_time, week_days, first_class_date, last_class_date, price, info) values
+    ('Переводчик',1,10,90,'Понедельник, Среда', '2022-10-15 15:00:00', '2022-12-15 15:00:00', 30000, 'Курсы для переводчиков'),
+    ('Физика',2,20,45,'Понедельник, Пятница', '2022-10-10 12:00:00', '2022-12-10 12:00:00', 45000, 'Курсы по физике для школьников'),
+    ('Готовка',3,5,100,'Понедельник', '2022-10-20 18:00:00', '2022-12-20 18:00:00', 10000, 'Курсы для повышения навыков готовки');
