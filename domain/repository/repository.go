@@ -88,6 +88,30 @@ func (rep *Repository) GetDirection(ctx context.Context, id int) (models.Directi
     return direction, err
 }
 
+func (rep *Repository) UpdateDirection(ctx context.Context, id int, name string) error {
+    query := "SELECT * FROM graduate_work.update_direction($1, $2)"
+
+    _, err := rep.DB.ExecContext(ctx, query, id, name)
+    if err != nil {
+        log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
+func (rep *Repository) DeleteDirection(ctx context.Context, id int) error {
+    query := "SELECT * FROM graduate_work.delete_direction($1)"
+
+    _, err := rep.DB.ExecContext(ctx, query, id)
+    if err != nil {
+        log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
 func (rep *Repository) GetCourses(ctx context.Context) ([]models.Courses, error) {
     query := "SELECT * FROM graduate_work.get_courses()"
 
