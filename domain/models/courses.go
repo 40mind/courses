@@ -9,10 +9,12 @@ type AdminInfo struct {
 }
 
 type Directions struct {
+    Id   int    `json:"id" db:"id"`
     Name string `json:"name" db:"name"`
 }
 
 type Courses struct {
+    Id             int       `json:"id" db:"name"`
     Name           string    `json:"name" db:"name"`
     NumOfClasses   int       `json:"num_of_classes" db:"num_of_classes"`
     ClassTime      int       `json:"class_time" db:"class_time"`
@@ -25,6 +27,7 @@ type Courses struct {
 }
 
 type Students struct {
+    Id            string    `json:"id" db:"id"`
     Name          string    `json:"name" db:"name"`
     Surname       string    `json:"surname" db:"surname"`
     Patronymic    string    `json:"patronymic" db:"patronymic"`
