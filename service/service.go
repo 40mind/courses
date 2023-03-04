@@ -141,7 +141,19 @@ func (s *Service) UpdateCourse(ctx context.Context, r *http.Request) (error, int
         return err, 400
     }
 
-    err = s.Repository.UpdateCourse(ctx, id, direction, numOfClasses, classTime, name, weekDays, info, firstClassDate, lastClassDate, price)
+    course := models.Courses{
+        Name:           name,
+        NumOfClasses:   numOfClasses,
+        ClassTime:      classTime,
+        WeekDays:       weekDays,
+        FirstClassDate: firstClassDate,
+        LastClassDate:  lastClassDate,
+        Price:          price,
+        Info:           info,
+        DirectionId:    direction,
+    }
+
+    err = s.Repository.UpdateCourse(ctx, id, course)
     if err != nil {
         return err, 500
     }

@@ -10,20 +10,19 @@ create table graduate_work.courses
 (
     id serial primary key not null,
     name varchar(50) not null,
-    direction int references graduate_work.directions (id) not null,
     num_of_classes int not null,
     class_time int not null,
     week_days varchar(60) not null,
     first_class_date timestamp not null,
     last_class_date timestamp not null,
     price decimal not null,
-    info text not null
+    info text not null,
+    direction int references graduate_work.directions (id) not null
 );
 
 create table graduate_work.students
 (
     id serial primary key not null,
-    course int references graduate_work.courses (id) not null,
     name varchar(50) not null,
     surname varchar(50) not null,
     patronymic varchar(50) null,
@@ -31,7 +30,8 @@ create table graduate_work.students
     phone varchar(15) not null,
     comment text null,
     payment boolean not null,
-    date_of_payment timestamp null
+    date_of_payment timestamp null,
+    course int references graduate_work.courses (id) not null
 );
 
 create role administrator;
@@ -55,72 +55,84 @@ create user courses_web_app with password 'passwordforwebapp';
 grant web_app to courses_web_app;
 
 create or replace function graduate_work.get_courses()
-    returns table (name varchar, direction varchar, num_of_classes int, class_time int, week_days varchar,
-        first_class_date timestamp, last_class_date timestamp, price decimal, info text)
+    returns table (name varchar, num_of_classes int, class_time int, week_days varchar,
+        first_class_date timestamp, last_class_date timestamp, price decimal, info text, direction varchar)
 language plpgsql as
 $$
 begin
     return query
         select c.name,
-               d.name,
                c.num_of_classes,
                c.class_time,
                c.week_days,
                c.first_class_date,
                c.last_class_date,
                c.price,
-               c.info
+               c.info,
+               d.name
         from graduate_work.courses c
         join graduate_work.directions d on c.direction = d.id;
 end
 $$;
 
-create or replace function graduate_work.get_course(_id int)
-    returns table (name varchar, direction varchar, num_of_classes int, class_time int, week_days varchar,
-                   first_class_date timestamp, last_class_date timestamp, price decimal, info text)
+create or replace function graduate_work.get_course_by_id(_id int)
+    returns table (name varchar, num_of_classes int, class_time int, week_days varchar,
+                   first_class_date timestamp, last_class_date timestamp, price decimal, info text, direction varchar)
     language plpgsql as
 $$
 begin
     return query
         select c.name,
-               d.name,
                c.num_of_classes,
                c.class_time,
                c.week_days,
                c.first_class_date,
                c.last_class_date,
                c.price,
-               c.info
+               c.info,
+               d.name
         from graduate_work.courses c
         join graduate_work.directions d on c.direction = d.id
         where c.id = _id;
 end
 $$;
 
-create or replace function graduate_work.create_course(_name varchar, _direction int, _num_of_classes int,
-    _class_time int, _week_days varchar,_first_class_date timestamp, _price numeric, _info text)
+create or replace function graduate_work.get_course_by_name(_name varchar)
+    returns table (id int)
+    language plpgsql as
+$$
+begin
+    return query
+        select c.id
+        from graduate_work.courses c
+        where c.name = _name;
+end
+$$;
+
+create or replace function graduate_work.create_course(_name varchar, _num_of_classes int,
+    _class_time int, _week_days varchar, _first_class_date timestamp, _last_class_date timestamp, _price numeric, _info text, _direction int)
     returns void
     language plpgsql as
 $$
 begin
-    insert into graduate_work.courses(name, direction, num_of_classes, class_time, week_days, first_class_date, price, info)
-    values (_name, _direction, _num_of_classes, _class_time, _week_days, _first_class_date, _price, _info);
+    insert into graduate_work.courses(name, num_of_classes, class_time, week_days, first_class_date, last_class_date, price, info, direction)
+    values (_name, _num_of_classes, _class_time, _week_days, _first_class_date, _last_class_date, _price, _info, _direction);
 end
 $$;
 
-create or replace function graduate_work.update_course(_id int, _name varchar, _direction int, _num_of_classes int,
-    _class_time int, _week_days varchar, _first_class_date timestamp, _price numeric, _info text)
+create or replace function graduate_work.update_course(_id int, _name varchar, _num_of_classes int,
+    _class_time int, _week_days varchar, _first_class_date timestamp, _last_class_date timestamp, _price numeric, _info text)
     returns void
     language plpgsql as
 $$
 begin
     update graduate_work.courses set
         name = _name,
-        direction = _direction,
         num_of_classes =_num_of_classes,
         class_time = _class_time,
         week_days = _week_days,
         first_class_date = _first_class_date,
+        last_class_date = _last_class_date,
         price = _price,
         info = _info
     where id = _id;
@@ -147,7 +159,7 @@ begin
 end
 $$;
 
-create or replace function graduate_work.get_direction(_id int)
+create or replace function graduate_work.get_direction_by_id(_id int)
     returns table (name varchar)
     language plpgsql as
 $$
@@ -156,6 +168,18 @@ begin
         select d.name
         from graduate_work.directions d
         where d.id = _id;
+end
+$$;
+
+create or replace function graduate_work.get_direction_by_name(_name varchar)
+    returns table (id int)
+    language plpgsql as
+$$
+begin
+    return query
+        select d.id
+        from graduate_work.directions d
+        where d.name = _name;
 end
 $$;
 
@@ -243,14 +267,13 @@ begin
 end
 $$;
 
-create or replace function graduate_work.update_student(_id int, _course int, _name varchar, _surname varchar, _email varchar, _phone varchar,
+create or replace function graduate_work.update_student(_id int, _name varchar, _surname varchar, _email varchar, _phone varchar,
     _payment bool, _patronymic varchar default null, _comment text default null, _date_of_payment timestamp default null)
     returns void
     language plpgsql as
 $$
 begin
     update graduate_work.students set
-        course = _course,
         name = _name,
         surname = _surname,
         patronymic = _patronymic,

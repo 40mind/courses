@@ -68,7 +68,7 @@ func (rep *Repository) GetDirections(ctx context.Context) ([]models.Directions, 
 }
 
 func (rep *Repository) GetDirection(ctx context.Context, id int) (models.Directions, error) {
-    query := "SELECT * FROM graduate_work.get_direction($1)"
+    query := "SELECT * FROM graduate_work.get_direction_by_id($1)"
 
     row := rep.DB.QueryRowContext(ctx, query, id)
 
@@ -112,6 +112,19 @@ func (rep *Repository) DeleteDirection(ctx context.Context, id int) error {
     return nil
 }
 
+func (rep *Repository) CreateCourse(ctx context.Context, directionID int, course models.Courses) error {
+    query := "SELECT * FROM graduate_work.create_course($1, $2, $3, $4, $5, $6, $7, $8, $9)"
+
+    _, err := rep.DB.ExecContext(ctx, query, course.Name, course.NumOfClasses, course.ClassTime, course.WeekDays,
+        course.FirstClassDate, course.LastClassDate, course.Price, course.Info, directionID)
+    if err != nil {
+        log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
 func (rep *Repository) GetCourses(ctx context.Context) ([]models.Courses, error) {
     query := "SELECT * FROM graduate_work.get_courses()"
 
@@ -131,7 +144,6 @@ func (rep *Repository) GetCourses(ctx context.Context) ([]models.Courses, error)
         var course models.Courses
         err = rows.Scan(
             &course.Name,
-            &course.Direction,
             &course.NumOfClasses,
             &course.ClassTime,
             &course.WeekDays,
@@ -139,6 +151,7 @@ func (rep *Repository) GetCourses(ctx context.Context) ([]models.Courses, error)
             &course.LastClassDate,
             &course.Price,
             &course.Info,
+            &course.Direction,
         )
         if err != nil && err != sql.ErrNoRows {
             log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
@@ -152,14 +165,13 @@ func (rep *Repository) GetCourses(ctx context.Context) ([]models.Courses, error)
 }
 
 func (rep *Repository) GetCourse(ctx context.Context, id int) (models.Courses, error) {
-    query := "SELECT * FROM graduate_work.get_course($1)"
+    query := "SELECT * FROM graduate_work.get_course_by_id($1)"
 
     row := rep.DB.QueryRowContext(ctx, query, id)
 
     var course models.Courses
     err := row.Scan(
         &course.Name,
-        &course.Direction,
         &course.NumOfClasses,
         &course.ClassTime,
         &course.WeekDays,
@@ -167,6 +179,7 @@ func (rep *Repository) GetCourse(ctx context.Context, id int) (models.Courses, e
         &course.LastClassDate,
         &course.Price,
         &course.Info,
+        &course.Direction,
     )
     if err != nil {
         log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
@@ -178,6 +191,32 @@ func (rep *Repository) GetCourse(ctx context.Context, id int) (models.Courses, e
     }
 
     return course, nil
+}
+
+func (rep *Repository) UpdateCourse(ctx context.Context, id int, course models.Courses) error {
+    query := "SELECT * FROM graduate_work.update_course($1, $2, $3, $4, $5, $6, $7, $8, $9)"
+
+    _, err := rep.DB.ExecContext(ctx, query, id, course.Name, course.NumOfClasses, course.ClassTime, course.WeekDays,
+        course.FirstClassDate, course.LastClassDate, course.Price, course.Info)
+
+    if err != nil {
+        log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
+func (rep *Repository) DeleteCourse(ctx context.Context, id int) error {
+    query := `SELECT graduate_work.delete_course($1)`
+
+    _, err := rep.DB.ExecContext(ctx, query, id)
+    if err != nil {
+        log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
 }
 
 func (rep *Repository) GetStudents(ctx context.Context) ([]models.Students, error) {
@@ -252,32 +291,6 @@ func (rep *Repository) CreateStudent(ctx context.Context, course int, name, surn
     query := `SELECT graduate_work.create_student($1, $2, $3, $4, $5, $6, $7, $8, $9)`
 
     _, err := rep.DB.ExecContext(ctx, query, course, name, surname, patronymic, email, phone, comment, false, time.Unix(0, 0))
-    if err != nil {
-        log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
-        return fmt.Errorf(DBError)
-    }
-
-    return nil
-}
-
-func (rep *Repository) UpdateCourse(ctx context.Context, id, direction, numOfClasses, classTime int,
-    name, weekDays, info string, firstClassDate, lastClassDate time.Time, price float64) error {
-
-    query := `SELECT graduate_work.update_course($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
-
-    _, err := rep.DB.ExecContext(ctx, query, id, name, direction, numOfClasses, classTime, weekDays, firstClassDate, lastClassDate, price, info)
-    if err != nil {
-        log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
-        return fmt.Errorf(DBError)
-    }
-
-    return nil
-}
-
-func (rep *Repository) DeleteCourse(ctx context.Context, id int) error {
-    query := `SELECT graduate_work.delete_course($1)`
-
-    _, err := rep.DB.ExecContext(ctx, query, id)
     if err != nil {
         log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
         return fmt.Errorf(DBError)
