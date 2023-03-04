@@ -20,4 +20,6 @@ type DB struct {
 	Password		string
 	Name			string
 	Driver			string
+	Host			string
+	Port			string
 }

@@ -10,3 +10,5 @@
 	Password = "from env"
 	Name = "from env"
 	Driver = "postgres"
+	Host = "localhost"
+	Port = "5432"

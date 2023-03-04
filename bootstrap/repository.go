@@ -4,8 +4,24 @@ import (
 	"courses/domain/models"
 	"courses/domain/repository"
 	"database/sql"
+	"github.com/jimlawless/whereami"
+	_ "github.com/lib/pq"
+	"log"
 )
 
 func InitRepository(dbConfig *models.DB) *repository.Repository {
-	return repository.New(&sql.DB{}, dbConfig)
+	connectionString := "postgres://" + dbConfig.User + ":" + dbConfig.Password + "@" + dbConfig.Host +
+		":" + dbConfig.Port + "/" + dbConfig.Name + "?sslmode=disable"
+
+	db, err := sql.Open(dbConfig.Driver, connectionString)
+	if err != nil {
+		log.Fatalf("init repository error: %s: %s", err.Error(), whereami.WhereAmI())
+	}
+
+	err = db.Ping()
+	if err != nil {
+		log.Fatalf("init repository error: %s: %s", err.Error(), whereami.WhereAmI())
+	}
+
+	return repository.New(db, dbConfig)
 }

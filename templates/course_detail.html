@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Образование НИУ "МЭИ"</title>
+</head>
+<body>
+    <div class="page">
+        <div class="info">
+            <a href="/">Домашнаяя страница</a>
+            <div class="admin">
+            </div>
+        </div>
+        <div class="title">
+            <h3>{{ .Name }}</h3>
+        </div>
+        <div class="detail">
+            <p>Число занятий: {{ .NumOfClasses }}</p>
+            <p>Время одного занятия: {{ .ClassTime }} минут</p>
+            <p>Дни проведения занятий: {{ .WeekDays }}</p>
+            <p>Даты проведения занятий: с {{ .FirstClassDate }} по {{ .LastClassDate }}</p>
+            <p>Стоимость курса: {{ .Price }} рублей</p>
+            <p>Информация: {{ .Info }}</p>
+            <form action="/">
+                <button>Записаться</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

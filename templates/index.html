@@ -7,7 +7,7 @@
 <body>
     <div class="page">
         <div class="info">
-            <a href="/courses/">Домашнаяя страница</a>
+            <a href="/">Домашнаяя страница</a>
             <div class="admin">
             <a href="/courses/admin/">Администратор</a>
             <span>Пользователь: </span>
@@ -20,38 +20,39 @@
         </div>
         <div class="courses">
             <h3>Список курсов</h3>
+            {{ range . }}
             <ul>
                 <li>
                     <table>
                         <tr>
-                            <th colspan="2"></th>
+                            <th colspan="2">{{ .Name }}</th>
                         </tr>
                         <tr>
                             <td>Кол-во занятий:</td>
-                            <td></td>
+                            <td>{{ .NumOfClasses }}</td>
                         </tr>
                         <tr>
                             <td>Время занятия:</td>
-                            <td> минут</td>
+                            <td>{{ .ClassTime }} минут</td>
                         </tr>
                         <tr>
                             <td>Даты проведения:</td>
-                            <td> - </td>
+                            <td>{{ .FirstClassDate }} - {{ .LastClassDate }}</td>
                         </tr>
                         <tr>
                             <td>Стоимость:</td>
-                            <td> рублей</td>
+                            <td>{{ .Price }} рублей</td>
                         </tr>
                         <tr>
                             <td>
-                                <form action="/courses/record/">
+                                <form action="/">
                                     <button>Записаться</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <form action="">
+                                <form action="/{{ .Name }}">
                                     <button>Подробнее</button>
                                 </form>
                             </td>
@@ -59,6 +60,7 @@
                     </table>
                 </li>
             </ul>
+            {{ end }}
                 <p>Нет записей о курсах</p>
         </div>
         <div class="pagination">
