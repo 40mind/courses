@@ -256,19 +256,19 @@ begin
 end
 $$;
 
-create or replace function graduate_work.create_student(_course int, _name varchar, _surname varchar, _email varchar, _phone varchar,
-    _payment bool, _patronymic varchar default null, _comment text default null, _date_of_payment timestamp default null)
+create or replace function graduate_work.create_student(_name varchar, _surname varchar, _patronymic varchar, _email varchar,
+    _phone varchar, _comment text, _payment bool, _date_of_payment timestamp, _course int)
     returns void
     language plpgsql as
 $$
 begin
-    insert into graduate_work.students (course, name, surname, patronymic, email, phone, comment, payment, date_of_payment)
-    values (_course, _name, _surname, _patronymic, _email, _phone, _comment, _payment, _date_of_payment);
+    insert into graduate_work.students (name, surname, patronymic, email, phone, comment, payment, date_of_payment, course)
+    values (_name, _surname, _patronymic, _email, _phone, _comment, _payment, _date_of_payment, _course);
 end
 $$;
 
-create or replace function graduate_work.update_student(_id int, _name varchar, _surname varchar, _email varchar, _phone varchar,
-    _payment bool, _patronymic varchar default null, _comment text default null, _date_of_payment timestamp default null)
+create or replace function graduate_work.update_student(_id int, _name varchar, _surname varchar, _patronymic varchar, _email varchar,
+    _phone varchar, _comment text, _payment bool, _date_of_payment timestamp)
     returns void
     language plpgsql as
 $$

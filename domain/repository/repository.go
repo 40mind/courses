@@ -7,7 +7,6 @@ import (
     "fmt"
     "github.com/jimlawless/whereami"
     "log"
-    "time"
 )
 
 const DBError = "db error"
@@ -219,6 +218,19 @@ func (rep *Repository) DeleteCourse(ctx context.Context, id int) error {
     return nil
 }
 
+func (rep *Repository) CreateStudent(ctx context.Context, courseID int, student models.Students) error {
+    query := "SELECT * FROM graduate_work.create_student($1, $2, $3, $4, $5, $6, $7, $8, $9)"
+
+    _, err := rep.DB.ExecContext(ctx, query, student.Name, student.Surname, student.Patronymic, student.Email,
+        student.Phone, student.Comment, false, nil, courseID)
+    if err != nil {
+        log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
 func (rep *Repository) GetStudents(ctx context.Context) ([]models.Students, error) {
     query := "SELECT * FROM graduate_work.get_students()"
 
@@ -287,10 +299,23 @@ func (rep *Repository) GetStudent(ctx context.Context, id int) (models.Students,
     return student, nil
 }
 
-func (rep *Repository) CreateStudent(ctx context.Context, course int, name, surname, patronymic, email, phone, comment string) error {
-    query := `SELECT graduate_work.create_student($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+func (rep *Repository) UpdateStudent(ctx context.Context, id int, student models.Students) error {
+    query := "SELECT * FROM graduate_work.update_student($1, $2, $3, $4, $5, $6, $7, $8, $9)"
 
-    _, err := rep.DB.ExecContext(ctx, query, course, name, surname, patronymic, email, phone, comment, false, time.Unix(0, 0))
+    _, err := rep.DB.ExecContext(ctx, query, id, student.Name, student.Surname, student.Patronymic, student.Email,
+        student.Phone, student.Comment, student.Payment, student.DateOfPayment)
+    if err != nil {
+        log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
+func (rep *Repository) DeleteStudent(ctx context.Context, id int) error {
+    query := `SELECT graduate_work.delete_student($1)`
+
+    _, err := rep.DB.ExecContext(ctx, query, id)
     if err != nil {
         log.Printf("%s: %s: %s", DBError, err.Error(), whereami.WhereAmI())
         return fmt.Errorf(DBError)
