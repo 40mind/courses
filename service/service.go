@@ -5,8 +5,6 @@ import (
     "courses/domain/models"
     "courses/domain/repository"
     "net/http"
-    "strconv"
-    "strings"
 )
 
 const (
@@ -24,154 +22,109 @@ func NewService(repository *repository.Repository) *Service {
     }
 }
 
-func (s *Service) GetDirections(ctx context.Context) ([]models.Directions, error) {
+func (s *Service) GetDirections(ctx context.Context) ([]models.Direction, error) {
     return s.Repository.GetDirections(ctx)
 }
 
-func (s *Service) GetDirection(ctx context.Context, id int) (models.Directions, error) {
+func (s *Service) GetDirection(ctx context.Context, id int) (models.Direction, error) {
     return s.Repository.GetDirection(ctx, id)
 }
 
-func (s *Service) GetCourses(ctx context.Context) ([]models.Courses, error) {
+func (s *Service) GetCourses(ctx context.Context) ([]models.Course, error) {
     return s.Repository.GetCourses(ctx)
 }
 
-func (s *Service) GetCourse(ctx context.Context, id int) (models.Courses, error) {
+func (s *Service) GetCourse(ctx context.Context, id int) (models.Course, error) {
     return s.Repository.GetCourse(ctx, id)
 }
 
-func (s *Service) GetStudents(ctx context.Context) ([]models.Students, error) {
+func (s *Service) GetStudents(ctx context.Context) ([]models.Student, error) {
     return s.Repository.GetStudents(ctx)
 }
 
-func (s *Service) GetStudent(ctx context.Context, id int) (models.Students, error) {
+func (s *Service) GetStudent(ctx context.Context, id int) (models.Student, error) {
     return s.Repository.GetStudent(ctx, id)
 }
 
-func (s *Service) CreateStudent(ctx context.Context, r *http.Request) (error, int) {
-    splitURL := strings.Split(r.URL.Path, "/")
-    course, err := strconv.Atoi(splitURL[len(splitURL)-1])
+func (s *Service) CreateDirection(ctx context.Context, direction models.Direction) (error, int) {
+    err := validateField(direction.Name, "name"); if err != nil { return err, http.StatusBadRequest}
+
+    err = s.Repository.CreateDirection(ctx, direction.Name)
     if err != nil {
-        return err, 400
+        return err, http.StatusInternalServerError
     }
 
-    name, err := validateStringForm(r, "name")
-    if err != nil {
-        return err, 400
-    }
-    surname, err := validateStringForm(r, "surname")
-    if err != nil {
-        return err, 400
-    }
-    patronymic, err := validateStringForm(r, "patronymic")
-    if err != nil {
-        return err, 400
-    }
-    email, err := validateStringForm(r, "email")
-    if err != nil {
-        return err, 400
-    }
-    phone, err := validateStringForm(r, "phone")
-    if err != nil {
-        return err, 400
-    }
-    comment, err := validateStringForm(r, "comment")
-    if err != nil {
-        return err, 400
-    }
-
-    err = validateEmail(email)
-    if err != nil {
-        return err, 400
-    }
-    err = validatePhone(phone)
-    if err != nil {
-        return err, 400
-    }
-
-    err = s.Repository.CreateStudent(ctx, course, name, surname, patronymic, email, phone, comment)
-    if err != nil {
-        return err, 500
-    }
-
-    return nil, 201
+    return nil, http.StatusCreated
 }
 
-func (s *Service) UpdateCourse(ctx context.Context, r *http.Request) (error, int) {
-    splitURL := strings.Split(r.URL.Path, "/")
-    id, err := strconv.Atoi(splitURL[len(splitURL)-1])
+func (s *Service) CreateCourse(ctx context.Context, course models.Course) (error, int) {
+    err := validateCourse(course); if err != nil { return err, http.StatusBadRequest }
+    err = validateField(course.DirectionId, "direction_id"); if err != nil { return err, http.StatusBadRequest }
+
+    err = s.Repository.CreateCourse(ctx, course)
     if err != nil {
-        return err, 400
+        return err, http.StatusInternalServerError
     }
 
-    name, err := validateStringForm(r, "name")
-    if err != nil {
-        return err, 400
-    }
-    numOfClasses, err := validateIntForm(r, "num_of_classes")
-    if err != nil {
-        return err, 400
-    }
-    classTime, err := validateIntForm(r, "class_time")
-    if err != nil {
-        return err, 400
-    }
-    weekDays, err := validateStringForm(r, "week_days")
-    if err != nil {
-        return err, 400
-    }
-    firstClassDate, err := validateDateForm(r, "first_class_date")
-    if err != nil {
-        return err, 400
-    }
-    lastClassDate, err := validateDateForm(r, "last_class_date")
-    if err != nil {
-        return err, 400
-    }
-    price, err := validateFloatForm(r, "price")
-    if err != nil {
-        return err, 400
-    }
-    info, err := validateStringForm(r, "info")
-    if err != nil {
-        return err, 400
-    }
-    direction, err := validateIntForm(r, "direction")
-    if err != nil {
-        return err, 400
-    }
-
-    course := models.Courses{
-        Name:           name,
-        NumOfClasses:   numOfClasses,
-        ClassTime:      classTime,
-        WeekDays:       weekDays,
-        FirstClassDate: firstClassDate,
-        LastClassDate:  lastClassDate,
-        Price:          price,
-        Info:           info,
-        DirectionId:    direction,
-    }
-
-    err = s.Repository.UpdateCourse(ctx, id, course)
-    if err != nil {
-        return err, 500
-    }
-
-    return nil, 200
+    return nil, http.StatusCreated
 }
 
-func (s *Service) DeleteCourse(ctx context.Context, r *http.Request) (error, int) {
-    splitURL := strings.Split(r.URL.Path, "/")
-    id, err := strconv.Atoi(splitURL[len(splitURL)-1])
+func (s *Service) CreateStudent(ctx context.Context, student models.Student) (error, int) {
+    err := validateStudent(student); if err != nil { return err, http.StatusBadRequest }
+    err = validateField(student.CourseId, "course_id"); if err != nil { return err, http.StatusBadRequest }
+
+    err = s.Repository.CreateStudent(ctx, student)
     if err != nil {
-        return err, 400
+        return err, http.StatusInternalServerError
     }
 
-    err = s.Repository.DeleteCourse(ctx, id)
+    return nil, http.StatusCreated
+}
+
+func (s *Service) UpdateDirection(ctx context.Context, direction models.Direction) (error, int) {
+    err := validateField(direction.Name, "name"); if err != nil { return err, http.StatusBadRequest}
+    err = validateField(direction.Id, "id"); if err != nil { return err, http.StatusBadRequest}
+
+    err = s.Repository.UpdateDirection(ctx, direction)
     if err != nil {
-        return err, 500
+        return err, http.StatusInternalServerError
     }
 
-    return nil, 200
+    return nil, http.StatusOK
+}
+
+func (s *Service) UpdateCourse(ctx context.Context, course models.Course) (error, int) {
+    err := validateCourse(course); if err != nil { return err, http.StatusBadRequest }
+    err = validateField(course.Id, "id"); if err != nil { return err, http.StatusBadRequest}
+
+    err = s.Repository.UpdateCourse(ctx, course)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+
+    return nil, http.StatusOK
+}
+
+func (s *Service) UpdateStudent(ctx context.Context, student models.Student) (error, int) {
+    err := validateStudent(student); if err != nil { return err, http.StatusBadRequest }
+    err = validateField(student.Id, "id"); if err != nil { return err, http.StatusBadRequest}
+
+    err = s.Repository.UpdateStudent(ctx, student)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+
+    return nil, http.StatusOK
+}
+
+func (s *Service) DeleteDirection(ctx context.Context, id int) error {
+    return s.Repository.DeleteDirection(ctx, id)
+}
+
+func (s *Service) DeleteCourse(ctx context.Context, id int) error {
+    return s.Repository.DeleteCourse(ctx, id)
+}
+
+func (s *Service) DeleteStudent(ctx context.Context, id int) error {
+    return s.Repository.DeleteStudent(ctx, id)
 }

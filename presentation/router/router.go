@@ -10,8 +10,8 @@ func NewRouter(c *controller.Controller) *mux.Router {
 	r.HandleFunc("/admin/courses/{id}", c.AdminUpdateCourse).Methods("PATCH")
 	r.HandleFunc("/admin/courses/{id}", c.AdminDeleteCourse).Methods("DELETE")
 	r.HandleFunc("/admin", c.AdminHome).Methods("GET")
-	r.HandleFunc("/{id}", c.CoursePage).Methods("GET")
-	r.HandleFunc("/{id}", c.CreateStudent).Methods("POST")
+	r.HandleFunc("course/{id}", c.CoursePage).Methods("GET")
+	r.HandleFunc("course/{id}", c.CreateStudent).Methods("POST")
 	r.HandleFunc("/", c.HomePage).Methods("GET")
 	return r
 }

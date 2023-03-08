@@ -3,18 +3,18 @@ package models
 import "time"
 
 type AdminInfo struct {
-    Directions []Directions `json:"directions"`
-    Courses    []Courses    `json:"courses"`
-    Students   []Students   `json:"students"`
+    Direction []Direction `json:"directions"`
+    Course    []Course    `json:"courses"`
+    Student   []Student   `json:"students"`
 }
 
-type Directions struct {
+type Direction struct {
     Id   int    `json:"id" db:"id"`
     Name string `json:"name" db:"name"`
 }
 
-type Courses struct {
-    Id             int       `json:"id" db:"name"`
+type Course struct {
+    Id             int       `json:"id" db:"id"`
     Name           string    `json:"name" db:"name"`
     NumOfClasses   int       `json:"num_of_classes" db:"num_of_classes"`
     ClassTime      int       `json:"class_time" db:"class_time"`
@@ -23,10 +23,11 @@ type Courses struct {
     LastClassDate  time.Time `json:"last_class_date" db:"last_class_date"`
     Price          float64   `json:"price" db:"price"`
     Info           string    `json:"info" db:"info"`
-    Direction      string    `json:"direction" db:"direction"`
+    DirectionId    int       `json:"direction_id" db:"direction"`
+    DirectionName  string    `json:"direction_name"`
 }
 
-type Students struct {
+type Student struct {
     Id            string    `json:"id" db:"id"`
     Name          string    `json:"name" db:"name"`
     Surname       string    `json:"surname" db:"surname"`
@@ -36,5 +37,6 @@ type Students struct {
     Comment       string    `json:"comment" db:"comment"`
     Payment       bool      `json:"payment" db:"payment"`
     DateOfPayment time.Time `json:"date_of_payment" db:"date_of_payment"`
-    Course        string    `json:"course" db:"course"`
+    CourseId      int       `json:"course_id" db:"course"`
+    CourseName    string    `json:"course_name"`
 }

@@ -56,7 +56,7 @@ grant web_app to courses_web_app;
 
 create or replace function graduate_work.get_courses()
     returns table (id int, name varchar, num_of_classes int, class_time int, week_days varchar,
-        first_class_date timestamp, last_class_date timestamp, price decimal, info text, direction varchar)
+        first_class_date timestamp, last_class_date timestamp, price decimal, info text, direction int)
 language plpgsql as
 $$
 begin
@@ -70,15 +70,14 @@ begin
                c.last_class_date,
                c.price,
                c.info,
-               d.name
-        from graduate_work.courses c
-        join graduate_work.directions d on c.direction = d.id;
+               c.direction
+        from graduate_work.courses c;
 end
 $$;
 
 create or replace function graduate_work.get_course_by_id(_id int)
     returns table (id int, name varchar, num_of_classes int, class_time int, week_days varchar,
-                   first_class_date timestamp, last_class_date timestamp, price decimal, info text, direction varchar)
+                   first_class_date timestamp, last_class_date timestamp, price decimal, info text, direction int)
     language plpgsql as
 $$
 begin
@@ -92,24 +91,11 @@ begin
                c.last_class_date,
                c.price,
                c.info,
-               d.name
+               c.direction
         from graduate_work.courses c
-        join graduate_work.directions d on c.direction = d.id
         where c.id = _id;
 end
 $$;
-
--- create or replace function graduate_work.get_course_by_name(_name varchar)
---     returns table (id int)
---     language plpgsql as
--- $$
--- begin
---     return query
---         select c.id
---         from graduate_work.courses c
---         where c.name = _name;
--- end
--- $$;
 
 create or replace function graduate_work.create_course(_name varchar, _num_of_classes int,
     _class_time int, _week_days varchar, _first_class_date timestamp, _last_class_date timestamp, _price numeric, _info text, _direction int)
@@ -175,18 +161,6 @@ begin
 end
 $$;
 
--- create or replace function graduate_work.get_direction_by_name(_name varchar)
---     returns table (id int)
---     language plpgsql as
--- $$
--- begin
---     return query
---         select d.id
---         from graduate_work.directions d
---         where d.name = _name;
--- end
--- $$;
-
 create or replace function graduate_work.create_direction(_name varchar)
     returns void
     language plpgsql as
@@ -219,7 +193,7 @@ $$;
 
 create or replace function graduate_work.get_students()
     returns table (id int, name varchar, surname varchar, patronymic varchar, email varchar, phone varchar,
-                   comment text, payment bool, date_of_payment timestamp, course varchar)
+                   comment text, payment bool, date_of_payment timestamp, course int)
     language plpgsql as
 $$
 begin
@@ -233,15 +207,14 @@ begin
                s.comment,
                s.payment,
                s.date_of_payment,
-               c.name
-        from graduate_work.students s
-        join graduate_work.courses c on s.course = c.id;
+               s.course
+        from graduate_work.students s;
 end
 $$;
 
 create or replace function graduate_work.get_student(_id int)
     returns table (id int, name varchar, surname varchar, patronymic varchar, email varchar, phone varchar,
-                   comment text, payment bool, date_of_payment timestamp, course varchar)
+                   comment text, payment bool, date_of_payment timestamp, course int)
     language plpgsql as
 $$
 begin
@@ -255,9 +228,8 @@ begin
                s.comment,
                s.payment,
                s.date_of_payment,
-               c.name
+               s.course
         from graduate_work.students s
-        join graduate_work.courses c on s.course = c.id
         where s.id = _id;
 end
 $$;
