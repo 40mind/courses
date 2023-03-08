@@ -23,8 +23,8 @@ type Course struct {
     LastClassDate  time.Time `json:"last_class_date" db:"last_class_date"`
     Price          float64   `json:"price" db:"price"`
     Info           string    `json:"info" db:"info"`
-    DirectionId    int       `json:"direction_id" db:"direction"`
-    DirectionName  string    `json:"direction_name"`
+    DirectionId    int       `json:"direction_id" db:"direction_id"`
+    DirectionName  string    `json:"direction_name" db:"direction_name"`
 }
 
 type Student struct {
@@ -37,6 +37,6 @@ type Student struct {
     Comment       string    `json:"comment" db:"comment"`
     Payment       bool      `json:"payment" db:"payment"`
     DateOfPayment time.Time `json:"date_of_payment" db:"date_of_payment"`
-    CourseId      int       `json:"course_id" db:"course"`
-    CourseName    string    `json:"course_name"`
+    CourseId      int       `json:"course_id" db:"course_id"`
+    CourseName    string    `json:"course_name" db:"course_name"`
 }

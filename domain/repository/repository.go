@@ -154,6 +154,7 @@ func (rep *Repository) GetCourses(ctx context.Context) ([]models.Course, error) 
             &course.Price,
             &course.Info,
             &course.DirectionId,
+            &course.DirectionName,
         )
         if err != nil && err != sql.ErrNoRows {
             log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
@@ -183,6 +184,7 @@ func (rep *Repository) GetCourse(ctx context.Context, id int) (models.Course, er
         &course.Price,
         &course.Info,
         &course.DirectionId,
+        &course.DirectionName,
     )
     if err != nil {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
@@ -263,6 +265,7 @@ func (rep *Repository) GetStudents(ctx context.Context) ([]models.Student, error
             &student.Payment,
             &student.DateOfPayment,
             &student.CourseId,
+            &student.CourseName,
         )
         if err != nil && err != sql.ErrNoRows {
             log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
@@ -292,6 +295,7 @@ func (rep *Repository) GetStudent(ctx context.Context, id int) (models.Student, 
         &student.Payment,
         &student.DateOfPayment,
         &student.CourseId,
+        &student.CourseName,
     )
     if err != nil {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())

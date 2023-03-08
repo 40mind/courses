@@ -11,15 +11,20 @@ import (
     "strings"
 )
 
-const controllerError = "controller error"
+const (
+	controllerError = "controller error"
+    badRequest = "bad request"
+)
 
 type Controller struct {
     Service *service.Service
+    config  models.Config
 }
 
-func NewController(service *service.Service) *Controller {
+func NewController(service *service.Service, config models.Config) *Controller {
     return &Controller{
         Service: service,
+        config:  config,
     }
 }
 
@@ -48,6 +53,7 @@ func (c *Controller) CoursePage(w http.ResponseWriter, r *http.Request) {
     splitURL := strings.Split(r.URL.Path, "/")
     id, err := strconv.Atoi(splitURL[len(splitURL)-1])
     if err != nil {
+        log.Printf("%s: %s: %s\n", badRequest, err.Error(), whereami.WhereAmI())
         writeResponse(w, nil, err, http.StatusBadRequest)
     }
 
@@ -70,16 +76,6 @@ func (c *Controller) CoursePage(w http.ResponseWriter, r *http.Request) {
     }
 
     writeResponse(w, responseJson, nil, http.StatusOK)
-}
-
-func (c *Controller) CreateStudent(w http.ResponseWriter, r *http.Request) {
-    err, status := c.Service.CreateStudent(r.Context(), r)
-    if err != nil {
-        writeResponse(w, nil, err, status)
-        return
-    }
-
-    writeResponse(w, nil, nil, status)
 }
 
 func (c *Controller) AdminHome(w http.ResponseWriter, r *http.Request) {
@@ -117,22 +113,13 @@ func (c *Controller) AdminHome(w http.ResponseWriter, r *http.Request) {
     writeResponse(w, responseJson, nil, http.StatusOK)
 }
 
-func (c *Controller) AdminUpdateCourse(w http.ResponseWriter, r *http.Request) {
-    err, status := c.Service.UpdateCourse(r.Context(), r)
+func (c *Controller) TechInfo(w http.ResponseWriter, r *http.Request) {
+    info, err := json.Marshal(c.config.Application)
     if err != nil {
-        writeResponse(w, nil, err, status)
+        log.Printf("%s: %s: %s\n", controllerError, err.Error(), whereami.WhereAmI())
+        writeResponse(w, nil, err, http.StatusInternalServerError)
         return
     }
 
-    writeResponse(w, nil, nil, http.StatusOK)
-}
-
-func (c *Controller) AdminDeleteCourse(w http.ResponseWriter, r *http.Request) {
-    err, status := c.Service.DeleteCourse(r.Context(), r)
-    if err != nil {
-        writeResponse(w, nil, err, status)
-        return
-    }
-
-    writeResponse(w, nil, nil, http.StatusOK)
+    writeResponse(w, info, nil, http.StatusOK)
 }

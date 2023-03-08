@@ -14,7 +14,7 @@ func main() {
 	rep := bootstrap.InitRepository(&config.DB)
 
 	svc := service.NewService(rep)
-	con := controller.NewController(svc)
+	con := controller.NewController(svc, config)
 	r := router.NewRouter(con)
 
 	log.Printf("server started on port %s\n", config.Server.Port)

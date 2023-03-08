@@ -56,7 +56,7 @@ grant web_app to courses_web_app;
 
 create or replace function graduate_work.get_courses()
     returns table (id int, name varchar, num_of_classes int, class_time int, week_days varchar,
-        first_class_date timestamp, last_class_date timestamp, price decimal, info text, direction int)
+        first_class_date timestamp, last_class_date timestamp, price decimal, info text, direction_id int, direction_name varchar)
 language plpgsql as
 $$
 begin
@@ -70,14 +70,16 @@ begin
                c.last_class_date,
                c.price,
                c.info,
-               c.direction
-        from graduate_work.courses c;
+               c.direction,
+               d.name
+        from graduate_work.courses c
+        join graduate_work.directions d on c.direction = d.id;
 end
 $$;
 
 create or replace function graduate_work.get_course_by_id(_id int)
     returns table (id int, name varchar, num_of_classes int, class_time int, week_days varchar,
-                   first_class_date timestamp, last_class_date timestamp, price decimal, info text, direction int)
+                   first_class_date timestamp, last_class_date timestamp, price decimal, info text, direction_id int, direction_name varchar)
     language plpgsql as
 $$
 begin
@@ -91,20 +93,22 @@ begin
                c.last_class_date,
                c.price,
                c.info,
-               c.direction
+               c.direction,
+               d.name
         from graduate_work.courses c
+        join graduate_work.directions d on c.direction = d.id
         where c.id = _id;
 end
 $$;
 
 create or replace function graduate_work.create_course(_name varchar, _num_of_classes int,
-    _class_time int, _week_days varchar, _first_class_date timestamp, _last_class_date timestamp, _price numeric, _info text, _direction int)
+    _class_time int, _week_days varchar, _first_class_date timestamp, _last_class_date timestamp, _price numeric, _info text, _direction_id int)
     returns void
     language plpgsql as
 $$
 begin
     insert into graduate_work.courses(name, num_of_classes, class_time, week_days, first_class_date, last_class_date, price, info, direction)
-    values (_name, _num_of_classes, _class_time, _week_days, _first_class_date, _last_class_date, _price, _info, _direction);
+    values (_name, _num_of_classes, _class_time, _week_days, _first_class_date, _last_class_date, _price, _info, _direction_id);
 end
 $$;
 
@@ -193,7 +197,7 @@ $$;
 
 create or replace function graduate_work.get_students()
     returns table (id int, name varchar, surname varchar, patronymic varchar, email varchar, phone varchar,
-                   comment text, payment bool, date_of_payment timestamp, course int)
+                   comment text, payment bool, date_of_payment timestamp, course_id int, course_name varchar)
     language plpgsql as
 $$
 begin
@@ -207,14 +211,16 @@ begin
                s.comment,
                s.payment,
                s.date_of_payment,
-               s.course
-        from graduate_work.students s;
+               s.course,
+               c.name
+        from graduate_work.students s
+        join graduate_work.courses c on s.course = c.id;
 end
 $$;
 
 create or replace function graduate_work.get_student(_id int)
     returns table (id int, name varchar, surname varchar, patronymic varchar, email varchar, phone varchar,
-                   comment text, payment bool, date_of_payment timestamp, course int)
+                   comment text, payment bool, date_of_payment timestamp, course_id int, course_name varchar)
     language plpgsql as
 $$
 begin
@@ -228,20 +234,22 @@ begin
                s.comment,
                s.payment,
                s.date_of_payment,
-               s.course
+               s.course,
+               c.name
         from graduate_work.students s
+        join graduate_work.courses c on s.course = c.id
         where s.id = _id;
 end
 $$;
 
 create or replace function graduate_work.create_student(_name varchar, _surname varchar, _patronymic varchar, _email varchar,
-    _phone varchar, _comment text, _payment bool, _date_of_payment timestamp, _course int)
+    _phone varchar, _comment text, _payment bool, _date_of_payment timestamp, _course_id int)
     returns void
     language plpgsql as
 $$
 begin
     insert into graduate_work.students (name, surname, patronymic, email, phone, comment, payment, date_of_payment, course)
-    values (_name, _surname, _patronymic, _email, _phone, _comment, _payment, _date_of_payment, _course);
+    values (_name, _surname, _patronymic, _email, _phone, _comment, _payment, _date_of_payment, _course_id);
 end
 $$;
 

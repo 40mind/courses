@@ -7,8 +7,8 @@ type Config struct {
 }
 
 type Application struct {
-	Name			string
-	Version			string
+	Name			string `json:"name"`
+	Version			string `json:"version"`
 }
 
 type Server struct {
