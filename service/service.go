@@ -9,7 +9,6 @@ import (
 
 const (
     controllerError = "controller error"
-    dateLayout      = "dd-mm-yyyy hh-mm-ss"
 )
 
 type Service struct {
@@ -49,7 +48,7 @@ func (s *Service) GetStudent(ctx context.Context, id int) (models.Student, error
 func (s *Service) CreateDirection(ctx context.Context, direction models.Direction) (error, int) {
     err := validateField(direction.Name, "name"); if err != nil { return err, http.StatusBadRequest}
 
-    err = s.Repository.CreateDirection(ctx, direction.Name)
+    err = s.Repository.CreateDirection(ctx, direction.Name.String)
     if err != nil {
         return err, http.StatusInternalServerError
     }

@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+    "gopkg.in/guregu/null.v4"
+)
 
 type AdminInfo struct {
     Direction []Direction `json:"directions"`
@@ -9,34 +11,34 @@ type AdminInfo struct {
 }
 
 type Direction struct {
-    Id   int    `json:"id" db:"id"`
-    Name string `json:"name" db:"name"`
+    Id   null.Int    `json:"id" db:"id"`
+    Name null.String `json:"name" db:"name"`
 }
 
 type Course struct {
-    Id             int       `json:"id" db:"id"`
-    Name           string    `json:"name" db:"name"`
-    NumOfClasses   int       `json:"num_of_classes" db:"num_of_classes"`
-    ClassTime      int       `json:"class_time" db:"class_time"`
-    WeekDays       string    `json:"week_days" db:"week_days"`
-    FirstClassDate time.Time `json:"first_class_date" db:"first_class_date"`
-    LastClassDate  time.Time `json:"last_class_date" db:"last_class_date"`
-    Price          float64   `json:"price" db:"price"`
-    Info           string    `json:"info" db:"info"`
-    DirectionId    int       `json:"direction_id" db:"direction_id"`
-    DirectionName  string    `json:"direction_name" db:"direction_name"`
+    Id             null.Int       `json:"id" db:"id"`
+    Name           null.String    `json:"name" db:"name"`
+    NumOfClasses   null.Int       `json:"num_of_classes" db:"num_of_classes"`
+    ClassTime      null.Int       `json:"class_time" db:"class_time"`
+    WeekDays       null.String    `json:"week_days" db:"week_days"`
+    FirstClassDate null.Time      `json:"first_class_date" db:"first_class_date"`
+    LastClassDate  null.Time      `json:"last_class_date" db:"last_class_date"`
+    Price          null.Float     `json:"price" db:"price"`
+    Info           null.String    `json:"info" db:"info"`
+    DirectionId    null.Int       `json:"direction_id" db:"direction_id"`
+    DirectionName  null.String    `json:"direction_name" db:"direction_name"`
 }
 
 type Student struct {
-    Id            string    `json:"id" db:"id"`
-    Name          string    `json:"name" db:"name"`
-    Surname       string    `json:"surname" db:"surname"`
-    Patronymic    string    `json:"patronymic" db:"patronymic"`
-    Email         string    `json:"email" db:"email"`
-    Phone         string    `json:"phone" db:"phone"`
-    Comment       string    `json:"comment" db:"comment"`
-    Payment       bool      `json:"payment" db:"payment"`
-    DateOfPayment time.Time `json:"date_of_payment" db:"date_of_payment"`
-    CourseId      int       `json:"course_id" db:"course_id"`
-    CourseName    string    `json:"course_name" db:"course_name"`
+    Id            null.String    `json:"id" db:"id"`
+    Name          null.String    `json:"name" db:"name"`
+    Surname       null.String    `json:"surname" db:"surname"`
+    Patronymic    null.String    `json:"patronymic" db:"patronymic"`
+    Email         null.String    `json:"email" db:"email"`
+    Phone         null.String    `json:"phone" db:"phone"`
+    Comment       null.String    `json:"comment" db:"comment"`
+    Payment       null.Bool      `json:"payment" db:"payment"`
+    DateOfPayment null.Time      `json:"date_of_payment" db:"date_of_payment"`
+    CourseId      null.Int       `json:"course_id" db:"course_id"`
+    CourseName    null.String    `json:"course_name" db:"course_name"`
 }

@@ -4,10 +4,10 @@ import (
 	"courses/domain/models"
 	"fmt"
 	"github.com/jimlawless/whereami"
+	"gopkg.in/guregu/null.v4"
 	"log"
 	"reflect"
 	"regexp"
-	"time"
 )
 
 
@@ -30,52 +30,51 @@ func validateStudent(student models.Student) error {
 	err = validateField(student.Patronymic, "patronymic"); if err != nil { return err }
 	err = validateField(student.Email, "email"); if err != nil { return err }
 	err = validateField(student.Phone, "phone"); if err != nil { return err }
-	err = validateField(student.Comment, "comment"); if err != nil { return err }
 
-	err = validateEmail(student.Email); if err != nil { return err }
-	err = validatePhone(student.Phone); if err != nil { return err }
+	err = validateEmail(student.Email.String); if err != nil { return err }
+	err = validatePhone(student.Phone.String); if err != nil { return err }
 
 	return nil
 }
 
 func validateField(value any, field string) error {
 	switch reflect.TypeOf(value).String() {
-	case "string":
-		strValue, ok := value.(string); if !ok {
+	case "null.String":
+		strValue, ok := value.(null.String); if !ok {
 			return fmt.Errorf("can't convert field %s to string", field)
 		}
 
-		if strValue == "" {
+		if strValue.String == "" || !strValue.Valid {
 			log.Printf("empty field %s\n", field)
 			return fmt.Errorf("empty field %s", field)
 		}
 
 		return nil
 
-	case "int":
-		intValue, ok := value.(int); if !ok {
+	case "null.Int":
+		intValue, ok := value.(null.Int); if !ok {
 			return fmt.Errorf("can't convert field %s to int", field)
 		}
 
-		if intValue <= 0 {
-			return fmt.Errorf("field %s should be positive", field)
+		if intValue.Int64 <= 0 || !intValue.Valid {
+			return fmt.Errorf("field %s should be not null and positive", field)
 		}
 
 		return nil
 
-	case "float64":
-		floatValue, ok := value.(float64); if !ok {
+	case "null.Float":
+		floatValue, ok := value.(null.Float); if !ok {
 			return fmt.Errorf("can't convert field %s to float64", field)
 		}
 
-		if floatValue <= 0 {
-			return fmt.Errorf("field %s should be positive", field)
+		if floatValue.Float64 <= 0 || !floatValue.Valid {
+			return fmt.Errorf("field %s should be not null and positive", field)
 		}
 
 		return nil
 
-	case "time.Time":
-		_, ok := value.(time.Time); if !ok {
+	case "null.Time":
+		_, ok := value.(null.Time); if !ok {
 			return fmt.Errorf("can't convert field %s to time.Time", field)
 		}
 

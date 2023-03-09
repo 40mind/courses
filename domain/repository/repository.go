@@ -39,7 +39,7 @@ func (rep *Repository) GetDirections(ctx context.Context) ([]models.Direction, e
     query := "SELECT * FROM graduate_work.get_directions()"
 
     rows, err := rep.DB.QueryContext(ctx, query)
-    if err != nil {
+    if err != nil && err != sql.ErrNoRows {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return []models.Direction{}, fmt.Errorf(DBError)
     }
@@ -77,7 +77,7 @@ func (rep *Repository) GetDirection(ctx context.Context, id int) (models.Directi
         &direction.Id,
         &direction.Name,
     )
-    if err != nil {
+    if err != nil && err != sql.ErrNoRows {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return models.Direction{}, fmt.Errorf(DBError)
     }
@@ -130,7 +130,7 @@ func (rep *Repository) GetCourses(ctx context.Context) ([]models.Course, error) 
     query := "SELECT * FROM graduate_work.get_courses()"
 
     rows, err := rep.DB.QueryContext(ctx, query)
-    if err != nil {
+    if err != nil && err != sql.ErrNoRows {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return []models.Course{}, fmt.Errorf(DBError)
     }
@@ -186,7 +186,7 @@ func (rep *Repository) GetCourse(ctx context.Context, id int) (models.Course, er
         &course.DirectionId,
         &course.DirectionName,
     )
-    if err != nil {
+    if err != nil && err != sql.ErrNoRows {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return models.Course{}, fmt.Errorf(DBError)
     }
@@ -241,7 +241,7 @@ func (rep *Repository) GetStudents(ctx context.Context) ([]models.Student, error
     query := "SELECT * FROM graduate_work.get_students()"
 
     rows, err := rep.DB.QueryContext(ctx, query)
-    if err != nil {
+    if err != nil && err != sql.ErrNoRows {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return []models.Student{}, fmt.Errorf(DBError)
     }
@@ -297,7 +297,7 @@ func (rep *Repository) GetStudent(ctx context.Context, id int) (models.Student, 
         &student.CourseId,
         &student.CourseName,
     )
-    if err != nil {
+    if err != nil && err != sql.ErrNoRows {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return models.Student{}, fmt.Errorf(DBError)
     }
