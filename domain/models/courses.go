@@ -30,7 +30,7 @@ type Course struct {
 }
 
 type Student struct {
-    Id            null.String    `json:"id" db:"id"`
+    Id            null.Int       `json:"id" db:"id"`
     Name          null.String    `json:"name" db:"name"`
     Surname       null.String    `json:"surname" db:"surname"`
     Patronymic    null.String    `json:"patronymic" db:"patronymic"`

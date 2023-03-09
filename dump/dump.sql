@@ -17,7 +17,7 @@ create table graduate_work.courses
     last_class_date timestamp not null,
     price decimal not null,
     info text not null,
-    direction int references graduate_work.directions (id) not null
+    direction int references graduate_work.directions (id) on delete cascade
 );
 
 create table graduate_work.students
@@ -31,7 +31,7 @@ create table graduate_work.students
     comment text null,
     payment boolean not null,
     date_of_payment timestamp null,
-    course int references graduate_work.courses (id) not null
+    course int references graduate_work.courses (id) on delete cascade
 );
 
 create role administrator;
