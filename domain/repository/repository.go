@@ -228,7 +228,7 @@ func (rep *Repository) CreateStudent(ctx context.Context, student models.Student
     query := "SELECT * FROM graduate_work.create_student($1, $2, $3, $4, $5, $6, $7, $8, $9)"
 
     _, err := rep.DB.ExecContext(ctx, query, student.Name, student.Surname, student.Patronymic, student.Email,
-        student.Phone, student.Comment, false, nil, student.CourseId)
+        student.Phone, student.Comment, student.Payment, student.DateOfPayment, student.CourseId)
     if err != nil {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return fmt.Errorf(DBError)

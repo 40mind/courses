@@ -29,7 +29,7 @@ create table graduate_work.students
     email varchar(50) not null,
     phone varchar(15) not null,
     comment text null,
-    payment boolean not null,
+    payment boolean null,
     date_of_payment timestamp null,
     course int references graduate_work.courses (id) on delete cascade
 );
