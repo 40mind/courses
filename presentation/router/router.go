@@ -1,6 +1,7 @@
 package router
 
 import (
+	"courses/middlewares"
 	"courses/presentation/controller"
 	"github.com/gorilla/mux"
 )
@@ -16,23 +17,27 @@ func NewRouter(c *controller.Controller) *mux.Router {
 func addAdminRoutes(r *mux.Router, c *controller.Controller) {
 	r.HandleFunc("/admin", c.AdminHome).Methods("GET")
 
-	r.HandleFunc("/admin/directions", c.AdminDirections).Methods("GET")
-	r.HandleFunc("/admin/directions", c.AdminCreateDirection).Methods("POST")
-	r.HandleFunc("/admin/directions/{id}", c.AdminDirection).Methods("GET")
-	r.HandleFunc("/admin/directions/{id}", c.AdminUpdateDirection).Methods("PATCH")
-	r.HandleFunc("/admin/directions/{id}", c.AdminDeleteDirection).Methods("DELETE")
+	r.HandleFunc("/admin/login", c.AdminLogIn).Methods("POST")
+	r.HandleFunc("/admin/logout", c.AdminLogOut).Methods("POST")
+	r.HandleFunc("/admin/admins", middlewares.AuthMiddleware(c.AdminCreateAdmin, c.Store)).Methods("POST")
 
-	r.HandleFunc("/admin/courses", c.AdminCourses).Methods("GET")
-	r.HandleFunc("/admin/courses", c.AdminCreateCourse).Methods("POST")
-	r.HandleFunc("/admin/courses/{id}", c.AdminCourse).Methods("GET")
-	r.HandleFunc("/admin/courses/{id}", c.AdminUpdateCourse).Methods("PATCH")
-	r.HandleFunc("/admin/courses/{id}", c.AdminDeleteCourse).Methods("DELETE")
+	r.HandleFunc("/admin/directions", middlewares.AuthMiddleware(c.AdminDirections, c.Store)).Methods("GET")
+	r.HandleFunc("/admin/directions", middlewares.AuthMiddleware(c.AdminCreateDirection, c.Store)).Methods("POST")
+	r.HandleFunc("/admin/directions/{id}", middlewares.AuthMiddleware(c.AdminDirection, c.Store)).Methods("GET")
+	r.HandleFunc("/admin/directions/{id}", middlewares.AuthMiddleware(c.AdminUpdateDirection, c.Store)).Methods("PATCH")
+	r.HandleFunc("/admin/directions/{id}", middlewares.AuthMiddleware(c.AdminDeleteDirection, c.Store)).Methods("DELETE")
 
-	r.HandleFunc("/admin/students", c.AdminStudents).Methods("GET")
-	r.HandleFunc("/admin/students", c.AdminCreateStudent).Methods("POST")
-	r.HandleFunc("/admin/students/{id}", c.AdminStudent).Methods("GET")
-	r.HandleFunc("/admin/students/{id}", c.AdminUpdateStudent).Methods("PATCH")
-	r.HandleFunc("/admin/students/{id}", c.AdminDeleteStudent).Methods("DELETE")
+	r.HandleFunc("/admin/courses", middlewares.AuthMiddleware(c.AdminCourses, c.Store)).Methods("GET")
+	r.HandleFunc("/admin/courses", middlewares.AuthMiddleware(c.AdminCreateCourse, c.Store)).Methods("POST")
+	r.HandleFunc("/admin/courses/{id}", middlewares.AuthMiddleware(c.AdminCourse, c.Store)).Methods("GET")
+	r.HandleFunc("/admin/courses/{id}", middlewares.AuthMiddleware(c.AdminUpdateCourse, c.Store)).Methods("PATCH")
+	r.HandleFunc("/admin/courses/{id}", middlewares.AuthMiddleware(c.AdminDeleteCourse, c.Store)).Methods("DELETE")
+
+	r.HandleFunc("/admin/students", middlewares.AuthMiddleware(c.AdminStudents, c.Store)).Methods("GET")
+	r.HandleFunc("/admin/students", middlewares.AuthMiddleware(c.AdminCreateStudent, c.Store)).Methods("POST")
+	r.HandleFunc("/admin/students/{id}", middlewares.AuthMiddleware(c.AdminStudent, c.Store)).Methods("GET")
+	r.HandleFunc("/admin/students/{id}", middlewares.AuthMiddleware(c.AdminUpdateStudent, c.Store)).Methods("PATCH")
+	r.HandleFunc("/admin/students/{id}", middlewares.AuthMiddleware(c.AdminDeleteStudent, c.Store)).Methods("DELETE")
 }
 
 func addUserRoutes(r *mux.Router, c *controller.Controller) {

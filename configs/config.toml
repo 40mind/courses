@@ -3,7 +3,7 @@
 	Version = "0.0.1"
 
 [Server]
-	Port = ":8080"
+	Port = ":80"
 
 [DB]
 	User = "from env"
@@ -12,3 +12,6 @@
 	Driver = "postgres"
 	Host = "localhost"
 	Port = "5432"
+
+[Session]
+	Key = "from env"

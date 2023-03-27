@@ -4,6 +4,7 @@ type Config struct {
 	Application		Application
 	Server			Server
 	DB				DB
+	Session         Session
 }
 
 type Application struct {
@@ -13,6 +14,10 @@ type Application struct {
 
 type Server struct {
 	Port			string
+}
+
+type Session struct {
+	Key             string
 }
 
 type DB struct {

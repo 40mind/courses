@@ -1,12 +1,19 @@
 create schema graduate_work;
 
-create table graduate_work.directions
+create table if not exists graduate_work.administrators
+(
+    id serial primary key not null,
+    login varchar(50) not null unique,
+    password varchar(250) not null
+);
+
+create table if not exists graduate_work.directions
 (
     id serial primary key not null,
     name varchar(50) not null unique
 );
 
-create table graduate_work.courses
+create table if not exists graduate_work.courses
 (
     id serial primary key not null,
     name varchar(50) not null,
@@ -20,7 +27,7 @@ create table graduate_work.courses
     direction int references graduate_work.directions (id) on delete cascade
 );
 
-create table graduate_work.students
+create table if not exists graduate_work.students
 (
     id serial primary key not null,
     name varchar(50) not null,
@@ -53,6 +60,40 @@ grant administrator to admin_ivan;
 
 create user courses_web_app with password 'passwordforwebapp';
 grant web_app to courses_web_app;
+
+create or replace function graduate_work.create_admin(_login varchar, _password varchar)
+    returns void
+    language plpgsql as
+$$
+begin
+    insert into graduate_work.administrators(login, password)
+    values (_login, _password);
+end
+$$;
+
+create or replace function graduate_work.check_admin_auth(_login varchar)
+    returns table(id int, password varchar)
+    language plpgsql as
+$$
+begin
+    return query
+        select a.id, a.password
+        from graduate_work.administrators a
+        where a.login = _login;
+end
+$$;
+
+create or replace function graduate_work.get_admin(_id int)
+    returns table(login varchar)
+    language plpgsql as
+$$
+begin
+    return query
+        select a.login
+        from graduate_work.administrators a
+        where a.id = _id;
+end
+$$;
 
 create or replace function graduate_work.get_courses()
     returns table (id int, name varchar, num_of_classes int, class_time int, week_days varchar,

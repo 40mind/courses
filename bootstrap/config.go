@@ -33,4 +33,7 @@ func getEnv(config *models.Config) {
 	config.DB.Name, ok = os.LookupEnv("DB_NAME"); if !ok {
 		log.Fatalf("init config error: %s", whereami.WhereAmI())
 	}
+	config.Session.Key, ok = os.LookupEnv("SESSION_KEY"); if !ok {
+		log.Fatalf("init config error: %s", whereami.WhereAmI())
+	}
 }

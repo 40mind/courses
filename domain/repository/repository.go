@@ -323,7 +323,7 @@ func (rep *Repository) UpdateStudent(ctx context.Context, student models.Student
 }
 
 func (rep *Repository) DeleteStudent(ctx context.Context, id int) error {
-    query := `SELECT graduate_work.delete_student($1)`
+    query := `SELECT * FROM graduate_work.delete_student($1)`
 
     _, err := rep.DB.ExecContext(ctx, query, id)
     if err != nil {
@@ -332,4 +332,59 @@ func (rep *Repository) DeleteStudent(ctx context.Context, id int) error {
     }
 
     return nil
+}
+
+func (rep *Repository) CreateAdmin(ctx context.Context, admin models.Admin) error {
+    query := `SELECT * FROM graduate_work.create_admin($1, $2)`
+
+    _, err := rep.DB.ExecContext(ctx, query, admin.Login, admin.Password)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
+func (rep *Repository) CheckAdminAuth(ctx context.Context, login string) (models.Admin, error) {
+    query := `SELECT * FROM graduate_work.check_admin_auth($1)`
+
+    row := rep.DB.QueryRowContext(ctx, query, login)
+
+    var admin models.Admin
+    err := row.Scan(
+        &admin.Id,
+        &admin.Password,
+    )
+    if err != nil && err != sql.ErrNoRows {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return models.Admin{}, fmt.Errorf(DBError)
+    }
+
+    if err == sql.ErrNoRows {
+        return models.Admin{}, nil
+    }
+
+    return admin, nil
+}
+
+func (rep *Repository) GetAdmin(ctx context.Context, id int) (models.Admin, error) {
+    query := `SELECT * FROM graduate_work.get_admin($1)`
+
+    row := rep.DB.QueryRowContext(ctx, query, id)
+
+    var admin models.Admin
+    err := row.Scan(
+        &admin.Login,
+    )
+    if err != nil && err != sql.ErrNoRows {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return models.Admin{}, fmt.Errorf(DBError)
+    }
+
+    if err == sql.ErrNoRows {
+        return models.Admin{}, nil
+    }
+
+    return admin, nil
 }

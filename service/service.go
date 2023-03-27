@@ -4,6 +4,9 @@ import (
     "context"
     "courses/domain/models"
     "courses/domain/repository"
+    "golang.org/x/crypto/bcrypt"
+    "gopkg.in/guregu/null.v4"
+    "log"
     "net/http"
 )
 
@@ -126,4 +129,44 @@ func (s *Service) DeleteCourse(ctx context.Context, id int) error {
 
 func (s *Service) DeleteStudent(ctx context.Context, id int) error {
     return s.Repository.DeleteStudent(ctx, id)
+}
+
+func (s *Service) CreateAdmin(ctx context.Context, admin models.Admin) (error, int) {
+    err := validateField(admin.Login, "login"); if err != nil { return err, http.StatusBadRequest}
+    err = validateField(admin.Password, "password"); if err != nil { return err, http.StatusBadRequest}
+
+    pass, err := bcrypt.GenerateFromPassword([]byte(admin.Password.String), bcrypt.DefaultCost)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+    admin.Password = null.StringFrom(string(pass))
+
+    err = s.Repository.CreateAdmin(ctx, admin)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+
+    return nil, http.StatusCreated
+}
+
+func (s *Service) AdminLogIn(ctx context.Context, login, password null.String) (models.Admin, error, int) {
+    err := validateField(login, "login"); if err != nil { return models.Admin{}, err, http.StatusBadRequest}
+
+    admin, err := s.Repository.CheckAdminAuth(ctx, login.String)
+    if err != nil {
+        return models.Admin{}, err, http.StatusInternalServerError
+    }
+
+    nullAdmin := models.Admin{}
+    if admin == nullAdmin {
+        return models.Admin{}, nil, http.StatusBadRequest
+    }
+
+    err = bcrypt.CompareHashAndPassword([]byte(admin.Password.String), []byte(password.String))
+    if err != nil {
+        log.Println(err)
+        return models.Admin{}, err, http.StatusBadRequest
+    }
+
+    return models.Admin{}, nil, http.StatusOK
 }
