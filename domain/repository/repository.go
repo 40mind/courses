@@ -368,6 +368,34 @@ func (rep *Repository) CheckAdminAuth(ctx context.Context, login string) (models
     return admin, nil
 }
 
+func (rep *Repository) GetAdmins(ctx context.Context) ([]models.Admin, error) {
+    query := `SELECT * FROM graduate_work.get_admins()`
+
+    rows, err := rep.DB.QueryContext(ctx, query)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return nil, fmt.Errorf(DBError)
+    }
+
+    var admins []models.Admin
+    for rows.Next() {
+        var admin models.Admin
+        err = rows.Scan(
+            &admin.Id,
+            &admin.Login,
+        )
+
+        if err != nil && err != sql.ErrNoRows {
+            log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+            return nil, fmt.Errorf(DBError)
+        }
+
+        admins = append(admins, admin)
+    }
+
+    return admins, nil
+}
+
 func (rep *Repository) GetAdmin(ctx context.Context, id int) (models.Admin, error) {
     query := `SELECT * FROM graduate_work.get_admin($1)`
 
@@ -375,6 +403,7 @@ func (rep *Repository) GetAdmin(ctx context.Context, id int) (models.Admin, erro
 
     var admin models.Admin
     err := row.Scan(
+        &admin.Id,
         &admin.Login,
     )
     if err != nil && err != sql.ErrNoRows {
@@ -387,4 +416,16 @@ func (rep *Repository) GetAdmin(ctx context.Context, id int) (models.Admin, erro
     }
 
     return admin, nil
+}
+
+func (rep *Repository) DeleteAdmin(ctx context.Context, id int) error {
+    query := `SELECT * FROM graduate_work.delete_admin($1)`
+
+    _, err := rep.DB.ExecContext(ctx, query, id)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
 }

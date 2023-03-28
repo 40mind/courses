@@ -71,6 +71,38 @@ begin
 end
 $$;
 
+create or replace function graduate_work.get_admins()
+    returns table (id int, login varchar)
+    language plpgsql as
+$$
+begin
+    return query
+        select a.id, a.login
+        from graduate_work.administrators a;
+end
+$$;
+
+create or replace function graduate_work.get_admin(_id int)
+    returns table(id int, login varchar)
+    language plpgsql as
+$$
+begin
+    return query
+        select a.id, a.login
+        from graduate_work.administrators a
+        where a.id = _id;
+end
+$$;
+
+create or replace function graduate_work.delete_admin(_id int)
+    returns void
+    language plpgsql as
+$$
+begin
+    delete from graduate_work.administrators where id = _id;
+end
+$$;
+
 create or replace function graduate_work.check_admin_auth(_login varchar)
     returns table(id int, password varchar)
     language plpgsql as
@@ -80,18 +112,6 @@ begin
         select a.id, a.password
         from graduate_work.administrators a
         where a.login = _login;
-end
-$$;
-
-create or replace function graduate_work.get_admin(_id int)
-    returns table(login varchar)
-    language plpgsql as
-$$
-begin
-    return query
-        select a.login
-        from graduate_work.administrators a
-        where a.id = _id;
 end
 $$;
 

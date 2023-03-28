@@ -34,10 +34,17 @@ func (c *Controller) AdminHome(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    admins, err := c.Service.GetAdmins(r.Context())
+    if err != nil {
+        writeResponse(w, nil, err, http.StatusInternalServerError)
+        return
+    }
+
     info := models.AdminInfo{
         Direction: directions,
         Course:    courses,
         Student:   students,
+        Admins:    admins,
     }
 
     responseJson, err := json.Marshal(info)
@@ -48,6 +55,70 @@ func (c *Controller) AdminHome(w http.ResponseWriter, r *http.Request) {
     }
 
     writeResponse(w, responseJson, nil, http.StatusOK)
+}
+
+func (c *Controller) AdminGetAdmins(w http.ResponseWriter, r *http.Request) {
+    admins, err := c.Service.GetAdmins(r.Context())
+    if err != nil {
+        writeResponse(w, nil, err, http.StatusInternalServerError)
+        return
+    }
+
+    responseJson, err := json.Marshal(admins)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", controllerError, err.Error(), whereami.WhereAmI())
+        writeResponse(w, nil, err, http.StatusInternalServerError)
+        return
+    }
+
+    writeResponse(w, responseJson, nil, http.StatusOK)
+}
+
+func (c *Controller) AdminGetAdmin(w http.ResponseWriter, r *http.Request) {
+    splitURL := strings.Split(r.URL.Path, "/")
+    id, err := strconv.Atoi(splitURL[len(splitURL)-1])
+    if err != nil {
+        writeResponse(w, nil, err, http.StatusInternalServerError)
+        return
+    }
+
+    admin, err := c.Service.GetAdmin(r.Context(), id)
+    if err != nil {
+        writeResponse(w, nil, err, http.StatusInternalServerError)
+        return
+    }
+
+    nullAdmin := models.Admin{}
+    if admin == nullAdmin {
+        writeResponse(w, nil, nil, http.StatusNotFound)
+        return
+    }
+
+    responseJson, err := json.Marshal(admin)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", controllerError, err.Error(), whereami.WhereAmI())
+        writeResponse(w, nil, err, http.StatusInternalServerError)
+        return
+    }
+
+    writeResponse(w, responseJson, nil, http.StatusOK)
+}
+
+func (c *Controller) DeleteAdmin(w http.ResponseWriter, r *http.Request) {
+    splitURL := strings.Split(r.URL.Path, "/")
+    id, err := strconv.Atoi(splitURL[len(splitURL)-1])
+    if err != nil {
+        writeResponse(w, nil, err, http.StatusInternalServerError)
+        return
+    }
+
+    err = c.Service.DeleteAdmin(r.Context(), id)
+    if err != nil {
+        writeResponse(w, nil, err, http.StatusInternalServerError)
+        return
+    }
+
+    writeResponse(w, nil, nil, http.StatusOK)
 }
 
 func (c *Controller) AdminCreateAdmin(w http.ResponseWriter, r *http.Request) {
@@ -93,6 +164,7 @@ func (c *Controller) AdminLogIn(w http.ResponseWriter, r *http.Request) {
 
     admin, err, status := c.Service.AdminLogIn(r.Context(), admin.Login, admin.Password)
     if err != nil || status != http.StatusOK {
+        log.Printf("%s: %s: %s\n", controllerError, err.Error(), whereami.WhereAmI())
         writeResponse(w, nil, err, status)
         return
     }

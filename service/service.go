@@ -4,6 +4,7 @@ import (
     "context"
     "courses/domain/models"
     "courses/domain/repository"
+    "fmt"
     "golang.org/x/crypto/bcrypt"
     "gopkg.in/guregu/null.v4"
     "log"
@@ -149,6 +150,18 @@ func (s *Service) CreateAdmin(ctx context.Context, admin models.Admin) (error, i
     return nil, http.StatusCreated
 }
 
+func (s *Service) GetAdmins(ctx context.Context) ([]models.Admin, error) {
+    return s.Repository.GetAdmins(ctx)
+}
+
+func (s *Service) GetAdmin(ctx context.Context, id int) (models.Admin, error) {
+    return s.Repository.GetAdmin(ctx, id)
+}
+
+func (s *Service) DeleteAdmin(ctx context.Context, id int) error {
+    return s.Repository.DeleteAdmin(ctx, id)
+}
+
 func (s *Service) AdminLogIn(ctx context.Context, login, password null.String) (models.Admin, error, int) {
     err := validateField(login, "login"); if err != nil { return models.Admin{}, err, http.StatusBadRequest}
 
@@ -159,7 +172,7 @@ func (s *Service) AdminLogIn(ctx context.Context, login, password null.String) (
 
     nullAdmin := models.Admin{}
     if admin == nullAdmin {
-        return models.Admin{}, nil, http.StatusBadRequest
+        return models.Admin{}, fmt.Errorf("no admin with given login"), http.StatusBadRequest
     }
 
     err = bcrypt.CompareHashAndPassword([]byte(admin.Password.String), []byte(password.String))

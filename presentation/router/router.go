@@ -19,7 +19,10 @@ func addAdminRoutes(r *mux.Router, c *controller.Controller) {
 
 	r.HandleFunc("/admin/login", c.AdminLogIn).Methods("POST")
 	r.HandleFunc("/admin/logout", c.AdminLogOut).Methods("POST")
+	r.HandleFunc("/admin/admins", middlewares.AuthMiddleware(c.AdminGetAdmins, c.Store)).Methods("GET")
 	r.HandleFunc("/admin/admins", middlewares.AuthMiddleware(c.AdminCreateAdmin, c.Store)).Methods("POST")
+	r.HandleFunc("/admin/admins/{id}", middlewares.AuthMiddleware(c.AdminGetAdmin, c.Store)).Methods("GET")
+	r.HandleFunc("/admin/admins/{id}", middlewares.AuthMiddleware(c.DeleteAdmin, c.Store)).Methods("DELETE")
 
 	r.HandleFunc("/admin/directions", middlewares.AuthMiddleware(c.AdminDirections, c.Store)).Methods("GET")
 	r.HandleFunc("/admin/directions", middlewares.AuthMiddleware(c.AdminCreateDirection, c.Store)).Methods("POST")
