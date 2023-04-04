@@ -6,6 +6,7 @@ import (
 	"github.com/jimlawless/whereami"
 	"gopkg.in/guregu/null.v4"
 	"log"
+	"net/mail"
 	"reflect"
 	"regexp"
 )
@@ -31,7 +32,7 @@ func validateStudent(student models.Student) error {
 	err = validateField(student.Email, "email"); if err != nil { return err }
 	err = validateField(student.Phone, "phone"); if err != nil { return err }
 
-	err = validateEmail(student.Email.String); if err != nil { return err }
+	_, err = mail.ParseAddress(student.Email.String); if err != nil { return err }
 	err = validatePhone(student.Phone.String); if err != nil { return err }
 
 	return nil
@@ -83,22 +84,6 @@ func validateField(value any, field string) error {
 	default:
 		return fmt.Errorf("unknown type")
 	}
-}
-
-func validateEmail(email string) error {
-	pattern := `^\w+@\w+\.\w+$`
-	match, err := regexp.Match(pattern, []byte(email))
-	if err != nil {
-		log.Printf("%s: %s: %s\n", controllerError, err.Error(), whereami.WhereAmI())
-		return fmt.Errorf(controllerError)
-	}
-
-	if !match {
-		log.Printf("validation error: email is invalid: %s\n", whereami.WhereAmI())
-		return fmt.Errorf("validation error: email is invalid")
-	}
-
-	return nil
 }
 
 func validatePhone(phone string) error {

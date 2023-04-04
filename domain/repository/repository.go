@@ -7,16 +7,17 @@ import (
     "fmt"
     "github.com/jimlawless/whereami"
     "log"
+    "time"
 )
 
 const DBError = "db error"
 
 type Repository struct {
     DB       *sql.DB
-    DBConfig *models.DB
+    DBConfig models.DB
 }
 
-func New(db *sql.DB, dbConfig *models.DB) *Repository {
+func New(db *sql.DB, dbConfig models.DB) *Repository {
     return &Repository{
         DB:       db,
         DBConfig: dbConfig,
@@ -326,6 +327,18 @@ func (rep *Repository) DeleteStudent(ctx context.Context, id int) error {
     query := `SELECT * FROM graduate_work.delete_student($1)`
 
     _, err := rep.DB.ExecContext(ctx, query, id)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
+func (rep *Repository) ConfirmPayment(ctx context.Context, id int) error {
+    query := `SELECT * FROM graduate_work.confirm_payment($1, $2)`
+
+    _, err := rep.DB.ExecContext(ctx, query, id, time.Now())
     if err != nil {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return fmt.Errorf(DBError)

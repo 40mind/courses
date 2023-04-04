@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-func InitRepository(dbConfig *models.DB) *repository.Repository {
+func InitRepository(dbConfig models.DB) *repository.Repository {
 	connectionString := "postgres://" + dbConfig.User + ":" + dbConfig.Password + "@" + dbConfig.Host +
 		":" + dbConfig.Port + "/" + dbConfig.Name + "?sslmode=disable"
 

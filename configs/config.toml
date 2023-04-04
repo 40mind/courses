@@ -15,3 +15,9 @@
 
 [Session]
 	Key = "from env"
+
+[Email]
+	From = "from env"
+	Password = "from env"
+	Host = "smtp.yandex.ru"
+	Port = ":587"

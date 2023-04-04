@@ -5,6 +5,7 @@ type Config struct {
 	Server			Server
 	DB				DB
 	Session         Session
+	Email           Email
 }
 
 type Application struct {
@@ -27,4 +28,11 @@ type DB struct {
 	Driver			string
 	Host			string
 	Port			string
+}
+
+type Email struct {
+	From            string
+	Password        string
+	Host            string
+	Port            string
 }

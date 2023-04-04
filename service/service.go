@@ -4,6 +4,7 @@ import (
     "context"
     "courses/domain/models"
     "courses/domain/repository"
+    "courses/infrastructure"
     "fmt"
     "golang.org/x/crypto/bcrypt"
     "gopkg.in/guregu/null.v4"
@@ -16,12 +17,14 @@ const (
 )
 
 type Service struct {
-    Repository *repository.Repository
+    Repository      *repository.Repository
+    EmailSender     infrastructure.EmailSender
 }
 
-func NewService(repository *repository.Repository) *Service {
+func NewService(repository *repository.Repository, emailSender infrastructure.EmailSender) *Service {
     return &Service{
-        Repository: repository,
+        Repository:     repository,
+        EmailSender:    emailSender,
     }
 }
 
@@ -130,6 +133,25 @@ func (s *Service) DeleteCourse(ctx context.Context, id int) error {
 
 func (s *Service) DeleteStudent(ctx context.Context, id int) error {
     return s.Repository.DeleteStudent(ctx, id)
+}
+
+func (s *Service) ConfirmPayment(ctx context.Context, id int) (error, int) {
+    err := s.Repository.ConfirmPayment(ctx, id)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+
+    student, err := s.Repository.GetStudent(ctx, id)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+
+    err = s.EmailSender.SendMessage("Оплата прошла успешно", "Оплата прошла успешно, ожидайте начала курса", student.Email.String)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+
+    return nil, http.StatusOK
 }
 
 func (s *Service) CreateAdmin(ctx context.Context, admin models.Admin) (error, int) {

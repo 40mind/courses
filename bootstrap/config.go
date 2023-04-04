@@ -36,4 +36,10 @@ func getEnv(config *models.Config) {
 	config.Session.Key, ok = os.LookupEnv("SESSION_KEY"); if !ok {
 		log.Fatalf("init config error: %s", whereami.WhereAmI())
 	}
+	config.Email.From, ok = os.LookupEnv("EMAIL_FROM"); if !ok {
+		log.Fatalf("init config error: %s", whereami.WhereAmI())
+	}
+	config.Email.Password, ok = os.LookupEnv("EMAIL_PASSWORD"); if !ok {
+		log.Fatalf("init config error: %s", whereami.WhereAmI())
+	}
 }
