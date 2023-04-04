@@ -5,7 +5,7 @@ import (
     "encoding/json"
     "github.com/jimlawless/whereami"
     "gopkg.in/guregu/null.v4"
-    "io/ioutil"
+    "io"
     "log"
     "net/http"
     "strconv"
@@ -72,7 +72,7 @@ func (c *Controller) CreateStudent(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    body, err := ioutil.ReadAll(r.Body)
+    body, err := io.ReadAll(r.Body)
     if err != nil {
         log.Printf("%s: %s: %s\n", controllerError, err.Error(), whereami.WhereAmI())
         writeResponse(w, nil, err, http.StatusInternalServerError)
