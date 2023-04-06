@@ -226,10 +226,10 @@ func (rep *Repository) DeleteCourse(ctx context.Context, id int) error {
 }
 
 func (rep *Repository) CreateStudent(ctx context.Context, student models.Student) error {
-    query := "SELECT * FROM graduate_work.create_student($1, $2, $3, $4, $5, $6, $7, $8, $9)"
+    query := "SELECT * FROM graduate_work.create_student($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)"
 
     _, err := rep.DB.ExecContext(ctx, query, student.Name, student.Surname, student.Patronymic, student.Email,
-        student.Phone, student.Comment, student.Payment, student.DateOfPayment, student.CourseId)
+        student.Phone, student.Comment, student.Payment, student.PaymentUuid, student.YookassaUuid, student.DateOfPayment, student.CourseId)
     if err != nil {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return fmt.Errorf(DBError)
@@ -264,6 +264,8 @@ func (rep *Repository) GetStudents(ctx context.Context) ([]models.Student, error
             &student.Phone,
             &student.Comment,
             &student.Payment,
+            &student.PaymentUuid,
+            &student.YookassaUuid,
             &student.DateOfPayment,
             &student.CourseId,
             &student.CourseName,
@@ -294,6 +296,8 @@ func (rep *Repository) GetStudent(ctx context.Context, id int) (models.Student, 
         &student.Phone,
         &student.Comment,
         &student.Payment,
+        &student.PaymentUuid,
+        &student.YookassaUuid,
         &student.DateOfPayment,
         &student.CourseId,
         &student.CourseName,
@@ -311,10 +315,10 @@ func (rep *Repository) GetStudent(ctx context.Context, id int) (models.Student, 
 }
 
 func (rep *Repository) UpdateStudent(ctx context.Context, student models.Student) error {
-    query := "SELECT * FROM graduate_work.update_student($1, $2, $3, $4, $5, $6, $7, $8, $9)"
+    query := "SELECT * FROM graduate_work.update_student($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)"
 
     _, err := rep.DB.ExecContext(ctx, query, student.Id, student.Name, student.Surname, student.Patronymic, student.Email,
-        student.Phone, student.Comment, student.Payment, student.DateOfPayment)
+        student.Phone, student.Comment, student.Payment, student.PaymentUuid, student.YookassaUuid, student.DateOfPayment)
     if err != nil {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return fmt.Errorf(DBError)
@@ -327,6 +331,18 @@ func (rep *Repository) DeleteStudent(ctx context.Context, id int) error {
     query := `SELECT * FROM graduate_work.delete_student($1)`
 
     _, err := rep.DB.ExecContext(ctx, query, id)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
+func (rep *Repository) SetPaymentUuid(ctx context.Context, id int, paymentUuid, yookassaUuid string) error {
+    query := `SELECT * FROM graduate_work.set_payment_uuid($1, $2, $3)`
+
+    _, err := rep.DB.ExecContext(ctx, query, id, paymentUuid, yookassaUuid)
     if err != nil {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return fmt.Errorf(DBError)

@@ -37,6 +37,8 @@ create table if not exists graduate_work.students
     phone varchar(15) not null,
     comment text null,
     payment boolean null,
+    payment_uuid varchar(50) null unique,
+    yookassa_uuid varchar(50) null unique,
     date_of_payment timestamp null,
     course int references graduate_work.courses (id) on delete cascade
 );
@@ -258,7 +260,7 @@ $$;
 
 create or replace function graduate_work.get_students()
     returns table (id int, name varchar, surname varchar, patronymic varchar, email varchar, phone varchar,
-                   comment text, payment bool, date_of_payment timestamp, course_id int, course_name varchar)
+                   comment text, payment bool, payment_uuid varchar, yookassa_uuid varchar, date_of_payment timestamp, course_id int, course_name varchar)
     language plpgsql as
 $$
 begin
@@ -271,6 +273,8 @@ begin
                s.phone,
                s.comment,
                s.payment,
+               s.payment_uuid,
+               s.yookassa_uuid,
                s.date_of_payment,
                s.course,
                c.name
@@ -281,7 +285,7 @@ $$;
 
 create or replace function graduate_work.get_student(_id int)
     returns table (id int, name varchar, surname varchar, patronymic varchar, email varchar, phone varchar,
-                   comment text, payment bool, date_of_payment timestamp, course_id int, course_name varchar)
+                   comment text, payment bool, payment_uuid varchar, yookassa_uuid varchar, date_of_payment timestamp, course_id int, course_name varchar)
     language plpgsql as
 $$
 begin
@@ -294,6 +298,8 @@ begin
                s.phone,
                s.comment,
                s.payment,
+               s.payment_uuid,
+               s.yookassa_uuid,
                s.date_of_payment,
                s.course,
                c.name
@@ -304,18 +310,18 @@ end
 $$;
 
 create or replace function graduate_work.create_student(_name varchar, _surname varchar, _patronymic varchar, _email varchar,
-    _phone varchar, _comment text, _payment bool, _date_of_payment timestamp, _course_id int)
+    _phone varchar, _comment text, _payment bool, _payment_uuid varchar, _yookassa_uuid varchar, _date_of_payment timestamp, _course_id int)
     returns void
     language plpgsql as
 $$
 begin
-    insert into graduate_work.students (name, surname, patronymic, email, phone, comment, payment, date_of_payment, course)
-    values (_name, _surname, _patronymic, _email, _phone, _comment, _payment, _date_of_payment, _course_id);
+    insert into graduate_work.students (name, surname, patronymic, email, phone, comment, payment, payment_uuid, yookassa_uuid, date_of_payment, course)
+    values (_name, _surname, _patronymic, _email, _phone, _comment, _payment, _payment_uuid, _yookassa_uuid, _date_of_payment, _course_id);
 end
 $$;
 
 create or replace function graduate_work.update_student(_id int, _name varchar, _surname varchar, _patronymic varchar, _email varchar,
-    _phone varchar, _comment text, _payment bool, _date_of_payment timestamp)
+    _phone varchar, _comment text, _payment bool, _payment_uuid varchar, _yookassa_uuid varchar, _date_of_payment timestamp)
     returns void
     language plpgsql as
 $$
@@ -328,6 +334,8 @@ begin
         phone = _phone,
         comment = _comment,
         payment = _payment,
+        payment_uuid = _payment_uuid,
+        yookassa_uuid = _yookassa_uuid,
         date_of_payment = _date_of_payment
     where id = _id;
 end
@@ -339,6 +347,18 @@ create or replace function graduate_work.delete_student(_id int)
 $$
 begin
     delete from graduate_work.students where id = _id;
+end
+$$;
+
+create or replace function graduate_work.set_payment_uuid(_id int, _payment_uuid varchar, _yookassa_uuid varchar)
+    returns void
+    language plpgsql as
+$$
+begin
+    update graduate_work.students set
+        payment_uuid = _payment_uuid,
+        yookassa_uuid = _yookassa_uuid
+    where id = _id;
 end
 $$;
 

@@ -32,6 +32,8 @@ type Student struct {
     Phone         null.String    `json:"phone" db:"phone"`
     Comment       null.String    `json:"comment" db:"comment"`
     Payment       null.Bool      `json:"payment" db:"payment"`
+    PaymentUuid   null.String    `json:"payment_uuid" db:"payment_uuid"`
+    YookassaUuid  null.String    `json:"yookassa_uuid" db:"yookassa_uuid"`
     DateOfPayment null.Time      `json:"date_of_payment" db:"date_of_payment"`
     CourseId      null.Int       `json:"course_id" db:"course_id"`
     CourseName    null.String    `json:"course_name" db:"course_name"`

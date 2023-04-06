@@ -96,3 +96,50 @@ func (c *Controller) CreateStudent(w http.ResponseWriter, r *http.Request) {
 
     writeResponse(w, nil, nil, http.StatusCreated)
 }
+
+func (c *Controller) CreatePayment(w http.ResponseWriter, r *http.Request) {
+    splitURL := strings.Split(r.URL.Path, "/")
+    id, err := strconv.Atoi(splitURL[len(splitURL)-1])
+    if err != nil {
+        log.Printf("%s: %s: %s\n", badRequest, err.Error(), whereami.WhereAmI())
+        writeResponse(w, nil, err, http.StatusBadRequest)
+        return
+    }
+
+    paymentUrl, err, status := c.Service.CreatePayment(r.Context(), id)
+    if err != nil {
+        writeResponse(w, nil, err, status)
+        return
+    }
+
+    var response struct{
+        ConfirmationUrl     string `json:"confirmation_url"`
+    }
+    response.ConfirmationUrl = paymentUrl
+    responseJson, err := json.Marshal(response)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", controllerError, err.Error(), whereami.WhereAmI())
+        writeResponse(w, nil, err, http.StatusInternalServerError)
+        return
+    }
+
+    writeResponse(w, responseJson, nil, http.StatusOK)
+}
+
+func (c *Controller) ConfirmPayment(w http.ResponseWriter, r *http.Request) {
+    splitURL := strings.Split(r.URL.Path, "/")
+    id, err := strconv.Atoi(splitURL[len(splitURL)-1])
+    if err != nil {
+        log.Printf("%s: %s: %s\n", badRequest, err.Error(), whereami.WhereAmI())
+        writeResponse(w, nil, err, http.StatusBadRequest)
+        return
+    }
+
+    err, status := c.Service.ConfirmPayment(r.Context(), id)
+    if err != nil {
+        writeResponse(w, nil, err, status)
+        return
+    }
+
+    writeResponse(w, nil, nil, http.StatusOK)
+}

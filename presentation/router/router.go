@@ -15,7 +15,7 @@ func NewRouter(c *controller.Controller) *mux.Router {
 }
 
 func addAdminRoutes(r *mux.Router, c *controller.Controller) {
-	r.HandleFunc("/admin", c.AdminHome).Methods("GET")
+	r.HandleFunc("/admin", middlewares.AuthMiddleware(c.AdminHome, c.Store)).Methods("GET")
 
 	r.HandleFunc("/admin/login", c.AdminLogIn).Methods("POST")
 	r.HandleFunc("/admin/logout", c.AdminLogOut).Methods("POST")
@@ -46,6 +46,8 @@ func addAdminRoutes(r *mux.Router, c *controller.Controller) {
 func addUserRoutes(r *mux.Router, c *controller.Controller) {
 	r.HandleFunc("/course/{id}", c.CoursePage).Methods("GET")
 	r.HandleFunc("/course/{id}", c.CreateStudent).Methods("POST")
+	r.HandleFunc("/payment/create/{id}", c.CreatePayment).Methods("GET")
+	r.HandleFunc("/payment/confirm/{id}", c.ConfirmPayment).Methods("GET")
 	r.HandleFunc("/", c.HomePage).Methods("GET")
 }
 

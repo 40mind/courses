@@ -42,4 +42,10 @@ func getEnv(config *models.Config) {
 	config.Email.Password, ok = os.LookupEnv("EMAIL_PASSWORD"); if !ok {
 		log.Fatalf("init config error: %s", whereami.WhereAmI())
 	}
+	config.YookassaAuth.Login, ok = os.LookupEnv("YOOKASSA_LOGIN"); if !ok {
+		log.Fatalf("init config error: %s", whereami.WhereAmI())
+	}
+	config.YookassaAuth.Password, ok = os.LookupEnv("YOOKASSA_PASSWORD"); if !ok {
+		log.Fatalf("init config error: %s", whereami.WhereAmI())
+	}
 }

@@ -21,3 +21,16 @@
 	Password = "from env"
 	Host = "smtp.yandex.ru"
 	Port = ":587"
+
+[YookassaProvider]
+	Host = "https://api.yookassa.ru/v3"
+	[YookassaProvider.Endpoint.CreatePayment]
+		Path = "/payments"
+		Method = "POST"
+	[YookassaProvider.Endpoint.GetPayment]
+		Path = "/payments"
+		Method = "GET"
+
+[YookassaAuth]
+	Login = "from env"
+	Password = "from env"

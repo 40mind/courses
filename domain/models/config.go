@@ -1,11 +1,13 @@
 package models
 
 type Config struct {
-	Application		Application
-	Server			Server
-	DB				DB
-	Session         Session
-	Email           Email
+	Application		    Application
+	Server			    Server
+	DB				    DB
+	Session             Session
+	Email               Email
+	YookassaProvider    Provider
+	YookassaAuth        Auth
 }
 
 type Application struct {
@@ -35,4 +37,19 @@ type Email struct {
 	Password        string
 	Host            string
 	Port            string
+}
+
+type Provider struct {
+	Host            string
+	Endpoint        map[string]Endpoint
+}
+
+type Endpoint struct {
+	Path            string
+	Method          string
+}
+
+type Auth struct {
+	Login           string
+	Password        string
 }

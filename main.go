@@ -4,6 +4,7 @@ import (
 	"courses/bootstrap"
 	"courses/presentation/controller"
 	"courses/presentation/router"
+	yookassaprovider "courses/providers/yookassa_provider"
 	"courses/service"
 	"log"
 	"net/http"
@@ -14,7 +15,8 @@ func main() {
 	rep := bootstrap.InitRepository(config.DB)
 	emailSender := bootstrap.InitEmailSender(config.Email)
 
-	svc := service.NewService(rep, emailSender)
+	yookassaProv := yookassaprovider.NewProvider(config.YookassaProvider, config.YookassaAuth)
+	svc := service.NewService(rep, emailSender, yookassaProv)
 	con := controller.NewController(svc, config)
 	r := router.NewRouter(con)
 

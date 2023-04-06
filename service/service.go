@@ -5,26 +5,35 @@ import (
     "courses/domain/models"
     "courses/domain/repository"
     "courses/infrastructure"
+    yookassaprovider "courses/providers/yookassa_provider"
+    "encoding/json"
     "fmt"
+    "github.com/google/uuid"
+    "github.com/jimlawless/whereami"
     "golang.org/x/crypto/bcrypt"
     "gopkg.in/guregu/null.v4"
     "log"
     "net/http"
+    "strconv"
 )
 
 const (
     controllerError = "controller error"
+    serviceError = "service error"
 )
 
 type Service struct {
-    Repository      *repository.Repository
-    EmailSender     infrastructure.EmailSender
+    Repository          *repository.Repository
+    EmailSender         infrastructure.EmailSender
+    YookassaProvider    yookassaprovider.Provider
 }
 
-func NewService(repository *repository.Repository, emailSender infrastructure.EmailSender) *Service {
+func NewService(repository *repository.Repository, emailSender infrastructure.EmailSender,
+    yookassaProvider yookassaprovider.Provider) *Service {
     return &Service{
-        Repository:     repository,
-        EmailSender:    emailSender,
+        Repository:         repository,
+        EmailSender:        emailSender,
+        YookassaProvider:   yookassaProvider,
     }
 }
 
@@ -135,18 +144,84 @@ func (s *Service) DeleteStudent(ctx context.Context, id int) error {
     return s.Repository.DeleteStudent(ctx, id)
 }
 
-func (s *Service) ConfirmPayment(ctx context.Context, id int) (error, int) {
-    err := s.Repository.ConfirmPayment(ctx, id)
+func (s *Service) CreatePayment(ctx context.Context, id int) (string, error, int) {
+    student, err := s.Repository.GetStudent(ctx, id)
     if err != nil {
-        return err, http.StatusInternalServerError
+        return "", err, http.StatusInternalServerError
     }
 
+    course, err := s.Repository.GetCourse(ctx, int(student.CourseId.Int64))
+    if err != nil {
+        return "", err, http.StatusInternalServerError
+    }
+
+    payment := models.CreatePayment{
+        Amount:       models.Amount{
+            Value:    course.Price,
+            Currency: null.StringFrom("RUB"),
+        },
+        Capture:      null.BoolFrom(true),
+        Confirmation: models.Confirmation{
+            Type:            null.StringFrom("redirect"),
+            ReturnUrl:       null.StringFrom("http://localhost/payment/confirm/" + strconv.Itoa(int(student.Id.Int64))),
+        },
+        Description:  null.StringFrom("Оплата курса " + course.Name.String + ", заказчик " + student.Surname.String + " " + student.Name.String),
+        Metadata:     map[string]string{
+            "studentId": strconv.Itoa(int(student.Id.Int64)),
+        },
+    }
+    paymentJson, err := json.Marshal(payment)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", serviceError, err.Error(), whereami.WhereAmI())
+        return "", err, http.StatusInternalServerError
+    }
+    idempotenceKey, err := uuid.NewUUID()
+    if err != nil {
+        log.Printf("%s: %s: %s\n", serviceError, err.Error(), whereami.WhereAmI())
+        return "", err, http.StatusInternalServerError
+    }
+
+    paymentResp, err := s.YookassaProvider.CreatePayment(paymentJson, idempotenceKey.String())
+    if err != nil {
+        return "", err, http.StatusInternalServerError
+    }
+
+    err = s.Repository.SetPaymentUuid(ctx, int(student.Id.Int64), idempotenceKey.String(), paymentResp.Id.String)
+    if err != nil {
+        return "", err, http.StatusInternalServerError
+    }
+
+    return paymentResp.Confirmation.ConfirmationUrl.String, nil, http.StatusOK
+}
+
+func (s *Service) ConfirmPayment(ctx context.Context, id int) (error, int) {
     student, err := s.Repository.GetStudent(ctx, id)
     if err != nil {
         return err, http.StatusInternalServerError
     }
 
-    err = s.EmailSender.SendMessage("Оплата прошла успешно", "Оплата прошла успешно, ожидайте начала курса", student.Email.String)
+    course, err := s.Repository.GetCourse(ctx, int(student.CourseId.Int64))
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+
+    paymentResp, err := s.YookassaProvider.GetPayment(student.YookassaUuid.String)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+    if paymentResp.Status.String != "succeeded" {
+        return fmt.Errorf("need to pay before confirm"), http.StatusBadRequest
+    }
+
+    err = s.Repository.ConfirmPayment(ctx, id)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+
+    err = s.EmailSender.SendMessage("Запись на курс " + student.CourseName.String,
+        "Оплата прошла успешно, ожидайте начала курса. Курс: " + student.CourseName.String +
+        ", дата первого занятия: " + course.FirstClassDate.Time.Format("02.01.2006 15:04") + ".",
+        student.Email.String)
     if err != nil {
         return err, http.StatusInternalServerError
     }
