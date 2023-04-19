@@ -15,6 +15,7 @@ import (
     "log"
     "net/http"
     "strconv"
+    "strings"
 )
 
 const (
@@ -45,8 +46,36 @@ func (s *Service) GetDirection(ctx context.Context, id int) (models.Direction, e
     return s.Repository.GetDirection(ctx, id)
 }
 
-func (s *Service) GetCourses(ctx context.Context) ([]models.Course, error) {
-    return s.Repository.GetCourses(ctx)
+func (s *Service) GetCourses(ctx context.Context, direction int, searchStr string) ([]models.Course, error) {
+    courses, err := s.Repository.GetCourses(ctx)
+    if err != nil {
+        return nil, err
+    }
+
+    var dirSorted []models.Course
+    if direction > 0 {
+        for _, course := range courses {
+            if course.DirectionId.Int64 == int64(direction) {
+                dirSorted = append(dirSorted, course)
+            }
+        }
+    } else {
+        dirSorted = courses
+    }
+
+    var result []models.Course
+    if searchStr != "" {
+        searchStr = strings.ToLower(strings.TrimSpace(searchStr))
+        for _, course := range dirSorted {
+            if strings.Contains(strings.ToLower(course.Name.String), searchStr) {
+                result = append(result, course)
+            }
+        }
+    } else {
+        result = dirSorted
+    }
+
+    return result, nil
 }
 
 func (s *Service) GetCourse(ctx context.Context, id int) (models.Course, error) {
@@ -163,7 +192,7 @@ func (s *Service) CreatePayment(ctx context.Context, id int) (string, error, int
         Capture:      null.BoolFrom(true),
         Confirmation: models.Confirmation{
             Type:            null.StringFrom("redirect"),
-            ReturnUrl:       null.StringFrom("http://localhost/payment/confirm/" + strconv.Itoa(int(student.Id.Int64))),
+            ReturnUrl:       null.StringFrom("http://localhost/api/v1/payment/confirm/" + strconv.Itoa(int(student.Id.Int64))),
         },
         Description:  null.StringFrom("Оплата курса " + course.Name.String + ", заказчик " + student.Surname.String + " " + student.Name.String),
         Metadata:     map[string]string{

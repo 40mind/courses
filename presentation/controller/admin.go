@@ -23,7 +23,7 @@ func (c *Controller) AdminHome(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    courses, err := c.Service.GetCourses(r.Context())
+    courses, err := c.Service.GetCourses(r.Context(), -1, "")
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return
@@ -338,7 +338,7 @@ func (c *Controller) AdminDeleteDirection(w http.ResponseWriter, r *http.Request
 }
 
 func (c *Controller) AdminCourses(w http.ResponseWriter, r *http.Request) {
-    courses, err := c.Service.GetCourses(r.Context())
+    courses, err := c.Service.GetCourses(r.Context(), -1, "")
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return

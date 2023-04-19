@@ -13,17 +13,40 @@ import (
 )
 
 func (c *Controller) HomePage(w http.ResponseWriter, r *http.Request) {
-    courses, err := c.Service.GetCourses(r.Context())
+    dir := r.URL.Query().Get("direction")
+    searchStr := r.URL.Query().Get("search")
+
+    dirInt := -1
+    var err error
+    if dir != "" {
+        dirInt, err = strconv.Atoi(dir)
+        if err != nil {
+            writeResponse(w, nil, err, http.StatusBadRequest)
+            return
+        }
+    }
+
+    courses, err := c.Service.GetCourses(r.Context(), dirInt, searchStr)
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return
     }
-    if courses == nil {
-        writeResponse(w, nil, nil, http.StatusNoContent)
+
+    directions, err := c.Service.GetDirections(r.Context())
+    if err != nil {
+        writeResponse(w, nil, err, http.StatusInternalServerError)
         return
     }
 
-    responseJson, err := json.Marshal(courses)
+    var info struct{
+        Directions  []models.Direction  `json:"directions"`
+        Courses     []models.Course     `json:"courses"`
+    }
+
+    info.Directions = directions
+    info.Courses = courses
+
+    responseJson, err := json.Marshal(info)
     if err != nil {
         log.Printf("%s: %s: %s\n", controllerError, err.Error(), whereami.WhereAmI())
         writeResponse(w, nil, err, http.StatusInternalServerError)
