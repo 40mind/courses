@@ -3,7 +3,6 @@ package controller
 import (
     "courses/domain/models"
     "encoding/json"
-    "fmt"
     "github.com/gorilla/sessions"
     "github.com/jimlawless/whereami"
     "gopkg.in/guregu/null.v4"
@@ -148,16 +147,12 @@ func (c *Controller) AdminCreateAdmin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) AdminLogIn(w http.ResponseWriter, r *http.Request) {
-    login, password, ok := r.BasicAuth()
-    if !ok {
-        log.Printf("%s: %s: %s\n", badRequest, "wrong authorization header", whereami.WhereAmI())
-        writeResponse(w, nil, fmt.Errorf("wrong authorization header"), http.StatusBadRequest)
+    var admin models.Admin
+    err := json.NewDecoder(r.Body).Decode(&admin)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", badRequest, err.Error(), whereami.WhereAmI())
+        writeResponse(w, nil, err, http.StatusBadRequest)
         return
-    }
-
-    admin := models.Admin{
-        Login:    null.StringFrom(login),
-        Password: null.StringFrom(password),
     }
 
     admin, err, status := c.Service.AdminLogIn(r.Context(), admin.Login, admin.Password)
@@ -201,7 +196,7 @@ func (c *Controller) AdminLogOut(w http.ResponseWriter, r *http.Request) {
     session.Values["authenticated"] = false
     session.Options = &sessions.Options{
         Path: "/",
-        MaxAge:   86400,
+        MaxAge:   -1,
     }
     err = session.Save(r, w)
     if err != nil {

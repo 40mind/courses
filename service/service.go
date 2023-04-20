@@ -290,6 +290,7 @@ func (s *Service) DeleteAdmin(ctx context.Context, id int) error {
 
 func (s *Service) AdminLogIn(ctx context.Context, login, password null.String) (models.Admin, error, int) {
     err := validateField(login, "login"); if err != nil { return models.Admin{}, err, http.StatusBadRequest}
+    err = validateField(login, "password"); if err != nil { return models.Admin{}, err, http.StatusBadRequest}
 
     admin, err := s.Repository.CheckAdminAuth(ctx, login.String)
     if err != nil {
@@ -298,13 +299,13 @@ func (s *Service) AdminLogIn(ctx context.Context, login, password null.String) (
 
     nullAdmin := models.Admin{}
     if admin == nullAdmin {
-        return models.Admin{}, fmt.Errorf("no admin with given login"), http.StatusBadRequest
+        return models.Admin{}, fmt.Errorf("no admin with given login and password"), http.StatusUnauthorized
     }
 
     err = bcrypt.CompareHashAndPassword([]byte(admin.Password.String), []byte(password.String))
     if err != nil {
         log.Println(err)
-        return models.Admin{}, err, http.StatusBadRequest
+        return models.Admin{}, err, http.StatusUnauthorized
     }
 
     return models.Admin{}, nil, http.StatusOK

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script src="static/js/login.js" defer></script>
+    <nav class="navbar navbar-expand-lg mb-5" style="background-color: #E0FFFF">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="./static/images/mei.png" alt="МЭИ" width="126" height="51">
+                Главная
+            </a>
+            <div id="admin_buttons" class="justify-content-end"></div>
+        </div>
+    </nav>
+    <div class="toast-container top-0 end-0 p-3"></div>
+    <div class="container">
+        <form novalidate>
+            <div class="row justify-content-center">
+                <div class="col-3 mb-1 ">
+                    <label for="input_login" class="form-label">Логин</label>
+                    <input type="email" class="form-control form-control-sm" id="input_login" required>
+                    <div id="login_help" class="form-text text-danger"></div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-3 mb-3">
+                    <label for="input_password" class="form-label">Пароль</label>
+                    <input type="password" class="form-control form-control-sm" id="input_password" required>
+                    <div id="password_help" class="form-text text-danger"></div>
+                </div>
+            </div>
+        </form>
+        <div class="row justify-content-center">
+            <div class="col-3 text-center">
+                <button class="btn btn-outline-primary" type="submit" onclick="loginButton()">Войти</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

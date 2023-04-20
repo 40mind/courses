@@ -1,64 +1,71 @@
-let admin_buttons = document.getElementById("admin_buttons")
+let admin_buttons = document.getElementById("admin_buttons");
 if (getCookie("admin-session") !== undefined) {
-    let elemAdminPanel = document.createElement("a")
-    elemAdminPanel.className = "nav-link active d-flex"
-    elemAdminPanel.setAttribute("aria-current", "page")
-    elemAdminPanel.setAttribute("href", "/admin")
-    elemAdminPanel.innerText = "Панель администратора"
-    admin_buttons.appendChild(elemAdminPanel)
+    let elemAdminPanel = document.createElement("a");
+    elemAdminPanel.className = "nav-link active d-flex";
+    elemAdminPanel.setAttribute("aria-current", "page");
+    elemAdminPanel.setAttribute("href", "/admin");
+    elemAdminPanel.innerText = "Панель администратора";
+    admin_buttons.appendChild(elemAdminPanel);
 
-    let elemAdminLogout = document.createElement("a")
-    elemAdminLogout.className = "nav-link active d-flex"
-    elemAdminLogout.setAttribute("aria-current", "page")
-    elemAdminLogout.setAttribute("href", "/logout")
-    elemAdminLogout.innerText = "Выход"
-    admin_buttons.appendChild(elemAdminLogout)
+    let elemAdminLogout = document.createElement("a");
+    elemAdminLogout.className = "nav-link active d-flex";
+    elemAdminLogout.setAttribute("aria-current", "page");
+    elemAdminLogout.setAttribute("href", "/logout.html");
+    elemAdminLogout.innerText = "Выход";
+    admin_buttons.appendChild(elemAdminLogout);
 } else {
     let elem = document.createElement("a");
-    elem.className = "nav-link active d-flex"
-    elem.setAttribute("aria-current", "page")
-    elem.setAttribute("href", "")
-    elem.innerText = "Вход для администратора"
-    admin_buttons.appendChild(elem)
+    elem.className = "nav-link active d-flex";
+    elem.setAttribute("aria-current", "page");
+    elem.setAttribute("href", "/login.html");
+    elem.innerText = "Вход для администратора";
+    admin_buttons.appendChild(elem);
 }
 
 fetch("/api/v1")
-    .then(response => response.json())
-    .then(info => {
-        let direction_select = document.getElementById("select_direction");
-        if (info.directions !== null) {
-            for (let direction of info.directions) {
-                let elem = document.createElement("option");
-                elem.innerText = direction.name;
-                elem.setAttribute("value", direction.id);
-                direction_select.appendChild(elem);
-            }
+    .then(response => {
+        if (response.status === 200) {
+            response.json().then(info => {
+                let direction_select = document.getElementById("select_direction");
+                if (info.directions !== null) {
+                    for (let direction of info.directions) {
+                        let elem = document.createElement("option");
+                        elem.innerText = direction.name;
+                        elem.setAttribute("value", direction.id);
+                        direction_select.appendChild(elem);
+                    }
+                }
+
+                let courses_row = document.getElementById("courses_row");
+                printCourses(courses_row, info);
+            })
+        } else if (response.status === 400) {
+            showDangerToast("Проверьте правильность введенных данных", false);
+        } else if (response.status === 500) {
+            showDangerToast("Серверная ошибка, попробуйте позже", true);
         }
-
-        let courses_row = document.getElementById("courses_row");
-        printCourses(courses_row, info)
     });
-
-function getCookie(name) {
-    let matches = document.cookie.match(new RegExp(
-        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-    ));
-    return matches ? decodeURIComponent(matches[1]) : undefined;
-}
 
 function searchButton() {
     let direction = document.getElementById("select_direction").value;
     let search_string = document.getElementById("search_string").value;
     fetch(`/api/v1?direction=${direction}&search=${search_string}`)
-        .then(response => response.json())
-        .then(info => {
-            let courses_row = document.getElementById("courses_row");
-            let remove_rows = document.querySelectorAll("div.col.course")
-            for (let remove_row of remove_rows) {
-                courses_row.removeChild(remove_row)
-            }
+        .then(response => {
+            if (response.status === 200) {
+                response.json().then(info => {
+                    let courses_row = document.getElementById("courses_row");
+                    let remove_rows = document.querySelectorAll("div.col.course");
+                    for (let remove_row of remove_rows) {
+                        courses_row.removeChild(remove_row);
+                    }
 
-            printCourses(courses_row, info)
+                    printCourses(courses_row, info);
+                })
+            } else if (response.status === 400) {
+                showDangerToast("Проверьте правильность введенных данных", false);
+            } else if (response.status === 500) {
+                showDangerToast("Серверная ошибка, попробуйте позже", true);
+            }
         });
 }
 
@@ -78,7 +85,7 @@ function printCourses(courses_row, info) {
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">Направление: ${course.direction_name}</li>
                                 <li class="list-group-item">Цена: ${course.price}</li>
-                                <button type="button" class="btn btn-primary">Подробнее</button>
+                                <button type="button" class="btn btn-primary" href="/course_detail.html">Подробнее</button>
                             </ul>
                         </div>
                     </div>`;
@@ -94,4 +101,36 @@ function printCourses(courses_row, info) {
             document.body.appendChild(elem);
         }
     }
+}
+
+function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function showDangerToast(message, is_server) {
+    let toast_div = document.querySelector("div.toast-container");
+    let elem = document.createElement("div");
+    let btn_style
+    if (is_server) {
+        elem.className = "toast align-items-center text-bg-danger";
+        btn_style = "btn-close-white"
+    } else {
+        elem.className = "toast align-items-center border-danger";
+        btn_style = "btn-close-black"
+    }
+    elem.setAttribute("role", "alert");
+    elem.setAttribute("aria-live", "assertive");
+    elem.setAttribute("aria-atomic", "true");
+    elem.innerHTML = `<div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close ${btn_style} me-2 m-auto" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+                </div>`;
+    toast_div.appendChild(elem);
+    let toast = new bootstrap.Toast(elem);
+    toast.show();
 }
