@@ -311,12 +311,12 @@ $$;
 
 create or replace function graduate_work.create_student(_name varchar, _surname varchar, _patronymic varchar, _email varchar,
     _phone varchar, _comment text, _payment bool, _payment_uuid varchar, _yookassa_uuid varchar, _date_of_payment timestamp, _course_id int)
-    returns void
+    returns table (id int)
     language plpgsql as
 $$
 begin
-    insert into graduate_work.students (name, surname, patronymic, email, phone, comment, payment, payment_uuid, yookassa_uuid, date_of_payment, course)
-    values (_name, _surname, _patronymic, _email, _phone, _comment, _payment, _payment_uuid, _yookassa_uuid, _date_of_payment, _course_id);
+    return query insert into graduate_work.students (name, surname, patronymic, email, phone, comment, payment, payment_uuid, yookassa_uuid, date_of_payment, course)
+    values (_name, _surname, _patronymic, _email, _phone, _comment, _payment, _payment_uuid, _yookassa_uuid, _date_of_payment, _course_id) returning students.id as id;
 end
 $$;
 

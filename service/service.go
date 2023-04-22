@@ -113,16 +113,16 @@ func (s *Service) CreateCourse(ctx context.Context, course models.Course) (error
     return nil, http.StatusCreated
 }
 
-func (s *Service) CreateStudent(ctx context.Context, student models.Student) (error, int) {
-    err := validateStudent(student); if err != nil { return err, http.StatusBadRequest }
-    err = validateField(student.CourseId, "course_id"); if err != nil { return err, http.StatusBadRequest }
+func (s *Service) CreateStudent(ctx context.Context, student models.Student) (null.Int, error, int) {
+    err := validateStudent(student); if err != nil { return null.Int{}, err, http.StatusBadRequest }
+    err = validateField(student.CourseId, "course_id"); if err != nil { return null.Int{}, err, http.StatusBadRequest }
 
-    err = s.Repository.CreateStudent(ctx, student)
+    studentId, err := s.Repository.CreateStudent(ctx, student)
     if err != nil {
-        return err, http.StatusInternalServerError
+        return null.Int{}, err, http.StatusInternalServerError
     }
 
-    return nil, http.StatusCreated
+    return studentId, nil, http.StatusCreated
 }
 
 func (s *Service) UpdateDirection(ctx context.Context, direction models.Direction) (error, int) {
@@ -173,10 +173,19 @@ func (s *Service) DeleteStudent(ctx context.Context, id int) error {
     return s.Repository.DeleteStudent(ctx, id)
 }
 
-func (s *Service) CreatePayment(ctx context.Context, id int) (string, error, int) {
+func (s *Service) CreatePayment(ctx context.Context, id int, redirectHost string) (string, error, int) {
     student, err := s.Repository.GetStudent(ctx, id)
     if err != nil {
         return "", err, http.StatusInternalServerError
+    }
+
+    if student.YookassaUuid.Valid {
+        paymentResp, err := s.YookassaProvider.GetPayment(student.YookassaUuid.String)
+        if err != nil {
+            return "", err, http.StatusInternalServerError
+        }
+
+        return paymentResp.Confirmation.ConfirmationUrl.String, nil, http.StatusOK
     }
 
     course, err := s.Repository.GetCourse(ctx, int(student.CourseId.Int64))
@@ -192,7 +201,7 @@ func (s *Service) CreatePayment(ctx context.Context, id int) (string, error, int
         Capture:      null.BoolFrom(true),
         Confirmation: models.Confirmation{
             Type:            null.StringFrom("redirect"),
-            ReturnUrl:       null.StringFrom("http://localhost/api/v1/payment/confirm/" + strconv.Itoa(int(student.Id.Int64))),
+            ReturnUrl:       null.StringFrom(redirectHost + "/confirm_payment.html?student=" + strconv.Itoa(int(student.Id.Int64))),
         },
         Description:  null.StringFrom("Оплата курса " + course.Name.String + ", заказчик " + student.Surname.String + " " + student.Name.String),
         Metadata:     map[string]string{
@@ -227,6 +236,10 @@ func (s *Service) ConfirmPayment(ctx context.Context, id int) (error, int) {
     student, err := s.Repository.GetStudent(ctx, id)
     if err != nil {
         return err, http.StatusInternalServerError
+    }
+
+    if student.Payment.Bool {
+        return nil, http.StatusOK
     }
 
     course, err := s.Repository.GetCourse(ctx, int(student.CourseId.Int64))

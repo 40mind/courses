@@ -85,7 +85,7 @@ function printCourses(courses_row, info) {
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">Направление: ${course.direction_name}</li>
                                 <li class="list-group-item">Цена: ${course.price}</li>
-                                <button type="button" class="btn btn-primary" href="/course_detail.html">Подробнее</button>
+                                <a class="btn btn-primary" href="/course_detail.html?course=${course.id}" role="button">Подробнее</a>
                             </ul>
                         </div>
                     </div>`;

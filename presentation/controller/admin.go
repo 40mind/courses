@@ -519,7 +519,7 @@ func (c *Controller) AdminCreateStudent(w http.ResponseWriter, r *http.Request) 
         return
     }
 
-    err, status := c.Service.CreateStudent(r.Context(), student)
+    _, err, status := c.Service.CreateStudent(r.Context(), student)
     if err != nil {
         writeResponse(w, nil, err, status)
         return

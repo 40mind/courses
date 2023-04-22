@@ -72,7 +72,7 @@ func (c *Controller) CoursePage(w http.ResponseWriter, r *http.Request) {
     }
     emptyCourse := models.Course{}
     if course == emptyCourse {
-        writeResponse(w, nil, nil, http.StatusNotFound)
+        writeResponse(w, nil, nil, http.StatusNoContent)
         return
     }
 
@@ -111,13 +111,24 @@ func (c *Controller) CreateStudent(w http.ResponseWriter, r *http.Request) {
     }
     student.CourseId = null.IntFrom(int64(id))
 
-    err, status := c.Service.CreateStudent(r.Context(), student)
+    studentId, err, status := c.Service.CreateStudent(r.Context(), student)
     if err != nil {
         writeResponse(w, nil, err, status)
         return
     }
 
-    writeResponse(w, nil, nil, http.StatusCreated)
+    var responseBody struct{
+        StudentId   int64 `json:"student_id"`
+    }
+    responseBody.StudentId = studentId.Int64
+    responseJson, err := json.Marshal(responseBody)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", controllerError, err.Error(), whereami.WhereAmI())
+        writeResponse(w, nil, err, http.StatusInternalServerError)
+        return
+    }
+
+    writeResponse(w, responseJson, nil, http.StatusCreated)
 }
 
 func (c *Controller) CreatePayment(w http.ResponseWriter, r *http.Request) {
@@ -129,7 +140,7 @@ func (c *Controller) CreatePayment(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    paymentUrl, err, status := c.Service.CreatePayment(r.Context(), id)
+    paymentUrl, err, status := c.Service.CreatePayment(r.Context(), id, c.config.Server.Host)
     if err != nil {
         writeResponse(w, nil, err, status)
         return
@@ -154,7 +165,7 @@ func (c *Controller) ConfirmPayment(w http.ResponseWriter, r *http.Request) {
     id, err := strconv.Atoi(splitURL[len(splitURL)-1])
     if err != nil {
         log.Printf("%s: %s: %s\n", badRequest, err.Error(), whereami.WhereAmI())
-        writeResponse(w, nil, err, http.StatusBadRequest)
+        writeResponse(w, nil, err, http.StatusInternalServerError)
         return
     }
 

@@ -6,6 +6,7 @@ import (
     "database/sql"
     "fmt"
     "github.com/jimlawless/whereami"
+    "gopkg.in/guregu/null.v4"
     "log"
     "time"
 )
@@ -225,17 +226,25 @@ func (rep *Repository) DeleteCourse(ctx context.Context, id int) error {
     return nil
 }
 
-func (rep *Repository) CreateStudent(ctx context.Context, student models.Student) error {
+func (rep *Repository) CreateStudent(ctx context.Context, student models.Student) (null.Int, error) {
     query := "SELECT * FROM graduate_work.create_student($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)"
 
-    _, err := rep.DB.ExecContext(ctx, query, student.Name, student.Surname, student.Patronymic, student.Email,
+    row := rep.DB.QueryRowContext(ctx, query, student.Name, student.Surname, student.Patronymic, student.Email,
         student.Phone, student.Comment, student.Payment, student.PaymentUuid, student.YookassaUuid, student.DateOfPayment, student.CourseId)
-    if err != nil {
+
+    var studentId null.Int
+    err := row.Scan(&studentId)
+    if err != nil && err != sql.ErrNoRows {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
-        return fmt.Errorf(DBError)
+        return null.Int{}, fmt.Errorf(DBError)
     }
 
-    return nil
+    if err == sql.ErrNoRows {
+        log.Printf("%s: %s: %s\n", DBError, "can't get created student id", whereami.WhereAmI())
+        return null.Int{}, fmt.Errorf("can't get created student id")
+    }
+
+    return studentId, nil
 }
 
 func (rep *Repository) GetStudents(ctx context.Context) ([]models.Student, error) {

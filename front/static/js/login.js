@@ -21,12 +21,10 @@ function loginButton() {
         return;
     }
 
-    let login = document.getElementById("input_login").value;
-    let password = document.getElementById("input_password").value;
     let admin = {
-        login: login,
-        password: password
-    };
+        login: document.getElementById("input_login").value,
+        password: document.getElementById("input_password").value
+    }
     fetch(`/api/v1/admin/login`, {
         method: "POST",
         body: JSON.stringify(admin)
@@ -45,7 +43,7 @@ function loginButton() {
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
-        })
+        });
 }
 
 function showDangerToast(message, is_server) {

@@ -87,8 +87,8 @@ func validateField(value any, field string) error {
 }
 
 func validatePhone(phone string) error {
-	pattern1 := `^\d+$`
-	pattern2 := `^\+\d+$`
+	pattern1 := `^\d{11}$`
+	pattern2 := `^\+\d{11}$`
 
 	match1, err := regexp.Match(pattern1, []byte(phone))
 	if err != nil {

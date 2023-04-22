@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Курс</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 </head>
 <body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-    <script src="" defer></script>
+    <script src="static/js/course_detail.js" defer></script>
     <nav class="navbar navbar-expand-lg mb-5" style="background-color: #E0FFFF">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
@@ -18,61 +18,60 @@
         </div>
     </nav>
     <div class="toast-container top-0 end-0 p-3"></div>
-    <div class="container mb-4">
+    <div id="course_container" class="container mb-5 invisible">
         <div class="row justify-content-center">
             <div class="col">
                 <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center">Название курса</h3>
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <th scope="row">Направление</th>
-                                    <td>направление</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Количество занятий</th>
-                                    <td>100</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Время одного занятия</th>
-                                    <td>120 минут</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Дни недели</th>
-                                    <td>Понедельник</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Даты проведения курса</th>
-                                    <td>20.04 - 1.06</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">Это информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ляЭто информация о курсе ля ля ля</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h5 class="text-center">Цена: 150000</h5>
-                    </div>
+                    <div class="card-body"></div>
                 </div>
             </div>
             <div class="col">
-                <h3>Записаться на курс:</h3>
-                <form novalidate>
-                    <div class="row justify-content-center">
-                        <div class="col mb-1">
-                            <label for="input_login" class="form-label">Логин</label>
-                            <input type="email" class="form-control form-control-sm" id="input_login" required>
-                            <div id="login_help" class="form-text text-danger"></div>
+                <div class="row justify-content-center">
+                    <h3>Записаться на курс:</h3>
+                    <form novalidate>
+                        <div class="row justify-content-center">
+                            <div class="col mb-1">
+                                <label for="input_surname" class="form-label">Фамилия*</label>
+                                <input type="text" class="form-control form-control-sm" id="input_surname">
+                                <div id="surname_help" class="form-text text-danger"></div>
+                            </div>
+                            <div class="col mb-1">
+                                <label for="input_name" class="form-label">Имя*</label>
+                                <input type="text" class="form-control form-control-sm" id="input_name">
+                                <div id="name_help" class="form-text text-danger"></div>
+                            </div>
+                            <div class="col mb-1">
+                                <label for="input_patronymic" class="form-label">Отчество*</label>
+                                <input type="text" class="form-control form-control-sm" id="input_patronymic">
+                                <div id="patronymic_help" class="form-text text-danger"></div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row justify-content-center">
-                        <div class="col mb-3">
-                            <label for="input_password" class="form-label">Пароль</label>
-                            <input type="password" class="form-control form-control-sm" id="input_password" required>
-                            <div id="password_help" class="form-text text-danger"></div>
+                        <div class="row justify-content-center">
+                            <div class="col mb-1">
+                                <label for="input_email" class="form-label">Электронная почта*</label>
+                                <input type="email" class="form-control form-control-sm" id="input_email" placeholder="example@mail.com">
+                                <div id="email_help" class="form-text text-danger"></div>
+                            </div>
+                            <div class="col mb-1">
+                                <label for="input_phone" class="form-label">Телефон*</label>
+                                <input type="text" class="form-control form-control-sm" id="input_phone" placeholder="+79000000000">
+                                <div id="phone_help" class="form-text text-danger"></div>
+                            </div>
                         </div>
+                        <div class="row justify-content-center">
+                            <div class="col mb-4">
+                                <label for="input_comment" class="form-label">Комментарий</label>
+                                <textarea class="form-control" id="input_comment" rows="3"></textarea>
+                                <div id="comment_help" class="form-text text-danger"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-3 text-center">
+                        <button class="btn btn-outline-primary" type="submit" onclick="recordButton()">Записаться</button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

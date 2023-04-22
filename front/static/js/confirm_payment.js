@@ -1,14 +1,19 @@
-fetch(`/api/v1/admin/logout`, {
-    method: "POST"
-})
-    .then(response => {
-        if (response.status === 500) {
-            showDangerToast("Серверная ошибка, попробуйте позже", true);
-            return;
-        }
+const urlParams = new URLSearchParams(window.location.search);
+let student_id = urlParams.get('student');
 
-        window.location.replace("/");
-    })
+fetch(`/api/v1/payment/confirm/${student_id}`, {
+    method: "POST"
+}).then(response => {
+    if (response.status === 200) {
+        let column = document.querySelector("div.col-5.text-center");
+        column.innerHTML = `<h3>Оплачено успешно!</h3>
+                            <p>Информация о курсе поступит на вашу электронную почту. Спасибо за покупку!</p>`
+    } else if (response.status === 400) {
+        showDangerToast("Курс не был оплачен, сначала оплатите курс", false);
+    } else if (response.status === 500) {
+        showDangerToast("Серверная ошибка, попробуйте позже", true);
+    }
+});
 
 function showDangerToast(message, is_server) {
     let toast_div = document.querySelector("div.toast-container");

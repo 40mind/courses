@@ -48,8 +48,8 @@ func addAdminRoutes(r *mux.Router, c *controller.Controller) {
 func addUserRoutes(r *mux.Router, c *controller.Controller) {
 	r.HandleFunc("/api/v1/course/{id}", c.CoursePage).Methods("GET")
 	r.HandleFunc("/api/v1/course/{id}", c.CreateStudent).Methods("POST")
-	r.HandleFunc("/api/v1/payment/create/{id}", c.CreatePayment).Methods("GET")
-	r.HandleFunc("/api/v1/payment/confirm/{id}", c.ConfirmPayment).Methods("GET")
+	r.HandleFunc("/api/v1/payment/create/{id}", c.CreatePayment).Methods("POST")
+	r.HandleFunc("/api/v1/payment/confirm/{id}", c.ConfirmPayment).Methods("POST")
 	r.HandleFunc("/api/v1", c.HomePage).Methods("GET")
 }
 

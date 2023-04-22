@@ -1,14 +1,20 @@
-fetch(`/api/v1/admin/logout`, {
-    method: "POST"
-})
-    .then(response => {
-        if (response.status === 500) {
-            showDangerToast("Серверная ошибка, попробуйте позже", true);
-            return;
-        }
+const urlParams = new URLSearchParams(window.location.search);
+let student_id = urlParams.get('student');
 
-        window.location.replace("/");
-    })
+fetch(`/api/v1/payment/create/${student_id}`, {
+    method: "POST"
+}).then(response => {
+    if (response.status === 200) {
+        response.json().then(url => {
+            let payment_button = document.querySelector("a.btn.btn-primary");
+            payment_button.setAttribute("href", url.confirmation_url);
+        });
+    } else if (response.status === 400) {
+        showDangerToast("Проверьте правильность введенных данных", false);
+    } else if (response.status === 500) {
+        showDangerToast("Серверная ошибка, попробуйте позже", true);
+    }
+});
 
 function showDangerToast(message, is_server) {
     let toast_div = document.querySelector("div.toast-container");
