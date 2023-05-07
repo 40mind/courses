@@ -38,8 +38,25 @@ func NewService(repository *repository.Repository, emailSender infrastructure.Em
     }
 }
 
-func (s *Service) GetDirections(ctx context.Context) ([]models.Direction, error) {
-    return s.Repository.GetDirections(ctx)
+func (s *Service) GetDirections(ctx context.Context, searchStr string) ([]models.Direction, error) {
+    directions, err := s.Repository.GetDirections(ctx)
+    if err != nil {
+        return nil, err
+    }
+
+    var result []models.Direction
+    if searchStr != "" {
+        searchStr = strings.ToLower(strings.TrimSpace(searchStr))
+        for _, direction := range directions {
+            if strings.Contains(strings.ToLower(direction.Name.String), searchStr) {
+                result = append(result, direction)
+            }
+        }
+    } else {
+        result = directions
+    }
+
+    return result, nil
 }
 
 func (s *Service) GetDirection(ctx context.Context, id int) (models.Direction, error) {
@@ -82,8 +99,25 @@ func (s *Service) GetCourse(ctx context.Context, id int) (models.Course, error) 
     return s.Repository.GetCourse(ctx, id)
 }
 
-func (s *Service) GetStudents(ctx context.Context) ([]models.Student, error) {
-    return s.Repository.GetStudents(ctx)
+func (s *Service) GetStudents(ctx context.Context, searchStr string) ([]models.Student, error) {
+    students, err := s.Repository.GetStudents(ctx)
+    if err != nil {
+        return nil, err
+    }
+
+    var result []models.Student
+    if searchStr != "" {
+        searchStr = strings.ToLower(strings.TrimSpace(searchStr))
+        for _, student := range students {
+            if strings.Contains(strings.ToLower(student.Surname.String), searchStr) {
+                result = append(result, student)
+            }
+        }
+    } else {
+        result = students
+    }
+
+    return result, nil
 }
 
 func (s *Service) GetStudent(ctx context.Context, id int) (models.Student, error) {
@@ -289,8 +323,25 @@ func (s *Service) CreateAdmin(ctx context.Context, admin models.Admin) (error, i
     return nil, http.StatusCreated
 }
 
-func (s *Service) GetAdmins(ctx context.Context) ([]models.Admin, error) {
-    return s.Repository.GetAdmins(ctx)
+func (s *Service) GetAdmins(ctx context.Context, searchStr string) ([]models.Admin, error) {
+    admins, err := s.Repository.GetAdmins(ctx)
+    if err != nil {
+        return nil, err
+    }
+
+    var result []models.Admin
+    if searchStr != "" {
+        searchStr = strings.ToLower(strings.TrimSpace(searchStr))
+        for _, admin := range admins {
+            if strings.Contains(strings.ToLower(admin.Login.String), searchStr) {
+                result = append(result, admin)
+            }
+        }
+    } else {
+        result = admins
+    }
+
+    return result, nil
 }
 
 func (s *Service) GetAdmin(ctx context.Context, id int) (models.Admin, error) {

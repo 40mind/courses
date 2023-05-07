@@ -32,7 +32,7 @@ func (c *Controller) HomePage(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    directions, err := c.Service.GetDirections(r.Context())
+    directions, err := c.Service.GetDirections(r.Context(), "")
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return

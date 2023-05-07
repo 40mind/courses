@@ -25,9 +25,9 @@ if (course_id === null) {
 
 function printCourse(info) {
     let first_date = new Date(info.first_class_date);
-    let f = Intl.DateTimeFormat("ru", {year: "numeric", month: "numeric", day: "numeric"}).format(first_date)
+    let f = Intl.DateTimeFormat("ru", {year: "numeric", month: "numeric", day: "numeric"}).format(first_date);
     let last_date = new Date(info.last_class_date);
-    let l = Intl.DateTimeFormat("ru", {year: "numeric", month: "numeric", day: "numeric"}).format(last_date)
+    let l = Intl.DateTimeFormat("ru", {year: "numeric", month: "numeric", day: "numeric"}).format(last_date);
 
     let card_body = document.querySelector("div.card-body");
     card_body.innerHTML = `<h3 class="card-title text-center">${info.name}</h3>

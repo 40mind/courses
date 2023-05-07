@@ -176,7 +176,7 @@ end
 $$;
 
 create or replace function graduate_work.update_course(_id int, _name varchar, _num_of_classes int,
-    _class_time int, _week_days varchar, _first_class_date timestamp, _last_class_date timestamp, _price numeric, _info text)
+    _class_time int, _week_days varchar, _first_class_date timestamp, _last_class_date timestamp, _price numeric, _info text, _direction_id int)
     returns void
     language plpgsql as
 $$
@@ -189,7 +189,8 @@ begin
         first_class_date = _first_class_date,
         last_class_date = _last_class_date,
         price = _price,
-        info = _info
+        info = _info,
+        direction = _direction_id
     where id = _id;
 end
 $$;

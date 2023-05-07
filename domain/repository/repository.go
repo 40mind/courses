@@ -201,10 +201,10 @@ func (rep *Repository) GetCourse(ctx context.Context, id int) (models.Course, er
 }
 
 func (rep *Repository) UpdateCourse(ctx context.Context, course models.Course) error {
-    query := "SELECT * FROM graduate_work.update_course($1, $2, $3, $4, $5, $6, $7, $8, $9)"
+    query := "SELECT * FROM graduate_work.update_course($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)"
 
     _, err := rep.DB.ExecContext(ctx, query, course.Id, course.Name, course.NumOfClasses, course.ClassTime, course.WeekDays,
-        course.FirstClassDate, course.LastClassDate, course.Price, course.Info)
+        course.FirstClassDate, course.LastClassDate, course.Price, course.Info, course.DirectionId)
 
     if err != nil {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())

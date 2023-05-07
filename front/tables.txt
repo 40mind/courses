@@ -1,0 +1,179 @@
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Логин</th>
+        </tr>
+    </thead>
+    <tbody class="table-group-divider">
+        <tr>
+            <th scope="col">1</th>
+            <td width="100%">admin1</td>
+            <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+            <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td width="100%">admin2</td>
+            <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+            <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+        </tr>
+        <tr>
+            <th scope="row">3</th>
+            <td width="100%">admin3</td>
+            <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+            <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table table-hover">
+<thead>
+<tr>
+    <th scope="col">#</th>
+    <th scope="col">Направление</th>
+</tr>
+</thead>
+<tbody class="table-group-divider">
+<tr>
+    <th scope="col">1</th>
+    <td width="100%">Направление1</td>
+    <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+    <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+</tr>
+<tr>
+    <th scope="row">2</th>
+    <td width="100%">Направление2</td>
+    <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+    <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+</tr>
+<tr>
+    <th scope="row">3</th>
+    <td width="100%">Направление3</td>
+    <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+    <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+</tr>
+</tbody>
+</table>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Курс</th>
+        <th scope="col">Кол-во занятий</th>
+        <th scope="col">Длительность занятия</th>
+        <th scope="col">Дни недели</th>
+        <th scope="col">Дата первого занятия</th>
+        <th scope="col">Дата последнего занятия</th>
+        <th scope="col">Цена</th>
+        <th scope="col">Информация</th>
+        <th scope="col">Направление</th>
+    </tr>
+    </thead>
+    <tbody class="table-group-divider">
+    <tr>
+        <th scope="col">1</th>
+        <th scope="col">Курс1</th>
+        <td>20</td>
+        <td>120 минут</td>
+        <td>Понедельник, пятница</td>
+        <td>10.01.2024</td>
+        <td>10.03.2024</td>
+        <td>40000 рублей</td>
+        <td>Направление 1</td>
+        <td width="100%">Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе </td>
+        <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+        <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+    </tr>
+    <tr>
+        <th scope="col">1</th>
+        <th scope="col">Курс1</th>
+        <td>20</td>
+        <td>120 минут</td>
+        <td>Понедельник, пятница</td>
+        <td>10.01.2024</td>
+        <td>10.03.2024</td>
+        <td>40000 рублей</td>
+        <td>Направление 1</td>
+        <td width="100%">Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе </td>
+        <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+        <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+    </tr>
+    <tr>
+        <th scope="col">1</th>
+        <th scope="col">Курс1</th>
+        <td>20</td>
+        <td>120 минут</td>
+        <td>Понедельник, пятница</td>
+        <td>10.01.2024</td>
+        <td>10.03.2024</td>
+        <td>40000 рублей</td>
+        <td>Направление 1</td>
+        <td width="100%">Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе Это информация о курсе </td>
+        <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+        <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+    </tr>
+    </tbody>
+</table>
+
+<table class="table table-hover">
+<thead>
+<tr>
+    <th scope="col">#</th>
+    <th scope="col">Имя</th>
+    <th scope="col">Фамилия</th>
+    <th scope="col">Отчество</th>
+    <th scope="col">Электронная почта</th>
+    <th scope="col">Номер телефона</th>
+    <th scope="col">Оплата</th>
+    <th scope="col">Дата оплаты</th>
+    <th scope="col">Курс</th>
+    <th scope="col">Комментарий</th>
+</tr>
+</thead>
+<tbody class="table-group-divider">
+<tr>
+    <th scope="col">1</th>
+    <td>Имя1</th>
+    <td>Фамилия1</td>
+    <td>Отчество1</td>
+    <td>email@mail.com</td>
+    <td>89009001122</td>
+    <td>Да</td>
+    <td>22.04.2023</td>
+    <td>Курс1</td>
+    <td width="100%">Это комментарий о пользователе Это комментарий о пользователе Это комментарий о пользователе Это комментарий о пользователе Это комментарий о пользователе Это комментарий о пользователе Это комментарий о пользователе Это комментарий о пользователе </td>
+    <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+    <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+</tr>
+<tr>
+    <th scope="col">1</th>
+    <td>Имя1</th>
+    <td>Фамилия1</td>
+    <td>Отчество1</td>
+    <td>email@mail.com</td>
+    <td>89009001122</td>
+    <td>Да</td>
+    <td>22.04.2023</td>
+    <td>Курс1</td>
+    <td width="100%">Это комментарий о пользователе Это комментарий о пользователе</td>
+    <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+    <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+</tr>
+<tr>
+    <th scope="col">1</th>
+    <td>Имя1</th>
+    <td>Фамилия1</td>
+    <td>Отчество1</td>
+    <td>email@mail.com</td>
+    <td>89009001122</td>
+    <td>Да</td>
+    <td>22.04.2023</td>
+    <td>Курс1</td>
+    <td width="100%"></td>
+    <td><button class="btn btn-primary btn-sm" type="button" onclick="">Редактировать</button></td>
+    <td><button class="btn btn-danger btn-sm" type="button" onclick="">Удалить</button></td>
+</tr>
+</tbody>
+</table>

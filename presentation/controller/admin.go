@@ -16,7 +16,7 @@ import (
 const sessionCookieName = "admin-session"
 
 func (c *Controller) AdminHome(w http.ResponseWriter, r *http.Request) {
-    directions, err := c.Service.GetDirections(r.Context())
+    directions, err := c.Service.GetDirections(r.Context(), "")
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return
@@ -28,13 +28,13 @@ func (c *Controller) AdminHome(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    students, err := c.Service.GetStudents(r.Context())
+    students, err := c.Service.GetStudents(r.Context(), "")
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return
     }
 
-    admins, err := c.Service.GetAdmins(r.Context())
+    admins, err := c.Service.GetAdmins(r.Context(), "")
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return
@@ -58,7 +58,9 @@ func (c *Controller) AdminHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) AdminGetAdmins(w http.ResponseWriter, r *http.Request) {
-    admins, err := c.Service.GetAdmins(r.Context())
+    searchStr := r.URL.Query().Get("search")
+
+    admins, err := c.Service.GetAdmins(r.Context(), searchStr)
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return
@@ -209,7 +211,9 @@ func (c *Controller) AdminLogOut(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) AdminDirections(w http.ResponseWriter, r *http.Request) {
-    directions, err := c.Service.GetDirections(r.Context())
+    searchStr := r.URL.Query().Get("search")
+
+    directions, err := c.Service.GetDirections(r.Context(), searchStr)
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return
@@ -333,7 +337,9 @@ func (c *Controller) AdminDeleteDirection(w http.ResponseWriter, r *http.Request
 }
 
 func (c *Controller) AdminCourses(w http.ResponseWriter, r *http.Request) {
-    courses, err := c.Service.GetCourses(r.Context(), -1, "")
+    searchStr := r.URL.Query().Get("search")
+
+    courses, err := c.Service.GetCourses(r.Context(), -1, searchStr)
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return
@@ -457,7 +463,9 @@ func (c *Controller) AdminDeleteCourse(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) AdminStudents(w http.ResponseWriter, r *http.Request) {
-    students, err := c.Service.GetStudents(r.Context())
+    searchStr := r.URL.Query().Get("search")
+
+    students, err := c.Service.GetStudents(r.Context(), searchStr)
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return

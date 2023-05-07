@@ -3,7 +3,7 @@ if (getCookie("admin-session") !== undefined) {
     let elemAdminPanel = document.createElement("a");
     elemAdminPanel.className = "nav-link active d-flex";
     elemAdminPanel.setAttribute("aria-current", "page");
-    elemAdminPanel.setAttribute("href", "/admin");
+    elemAdminPanel.setAttribute("href", "/admin_panel.html");
     elemAdminPanel.innerText = "Панель администратора";
     admin_buttons.appendChild(elemAdminPanel);
 
