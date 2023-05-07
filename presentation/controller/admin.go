@@ -16,45 +16,7 @@ import (
 const sessionCookieName = "admin-session"
 
 func (c *Controller) AdminHome(w http.ResponseWriter, r *http.Request) {
-    directions, err := c.Service.GetDirections(r.Context(), "")
-    if err != nil {
-        writeResponse(w, nil, err, http.StatusInternalServerError)
-        return
-    }
-
-    courses, err := c.Service.GetCourses(r.Context(), -1, "")
-    if err != nil {
-        writeResponse(w, nil, err, http.StatusInternalServerError)
-        return
-    }
-
-    students, err := c.Service.GetStudents(r.Context(), "")
-    if err != nil {
-        writeResponse(w, nil, err, http.StatusInternalServerError)
-        return
-    }
-
-    admins, err := c.Service.GetAdmins(r.Context(), "")
-    if err != nil {
-        writeResponse(w, nil, err, http.StatusInternalServerError)
-        return
-    }
-
-    info := models.AdminInfo{
-        Direction: directions,
-        Course:    courses,
-        Student:   students,
-        Admins:    admins,
-    }
-
-    responseJson, err := json.Marshal(info)
-    if err != nil {
-        log.Printf("%s: %s: %s\n", controllerError, err.Error(), whereami.WhereAmI())
-        writeResponse(w, nil, err, http.StatusInternalServerError)
-        return
-    }
-
-    writeResponse(w, responseJson, nil, http.StatusOK)
+    writeResponse(w, nil, nil, http.StatusOK)
 }
 
 func (c *Controller) AdminGetAdmins(w http.ResponseWriter, r *http.Request) {
@@ -464,8 +426,19 @@ func (c *Controller) AdminDeleteCourse(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) AdminStudents(w http.ResponseWriter, r *http.Request) {
     searchStr := r.URL.Query().Get("search")
+    course := r.URL.Query().Get("course")
 
-    students, err := c.Service.GetStudents(r.Context(), searchStr)
+    courseInt := -1
+    var err error
+    if course != "" {
+        courseInt, err = strconv.Atoi(course)
+        if err != nil {
+            writeResponse(w, nil, err, http.StatusBadRequest)
+            return
+        }
+    }
+
+    students, err := c.Service.GetStudents(r.Context(), courseInt, searchStr)
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return

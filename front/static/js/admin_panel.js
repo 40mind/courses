@@ -17,6 +17,13 @@ function adminButton() {
     createButton.removeAttribute("disabled");
     createButton.setAttribute("onclick", "createModalAdmin()");
 
+    let search_string = document.getElementById("search_string");
+    search_string.setAttribute("placeholder", "Поиск");
+
+    if (document.getElementById("select_course") !== null) {
+        document.getElementById("courses_select").innerHTML = ``;
+    }
+
     let elems_table = document.getElementById("elems_table");
     fetch(`/api/v1/admin/admins`)
         .then(response => {
@@ -250,6 +257,13 @@ function directionsButton() {
     let createButton = document.getElementById("createModalButton");
     createButton.removeAttribute("disabled");
     createButton.setAttribute("onclick", "createModalDirection()");
+
+    let search_string = document.getElementById("search_string");
+    search_string.setAttribute("placeholder", "Поиск");
+
+    if (document.getElementById("select_course") !== null) {
+        document.getElementById("courses_select").innerHTML = ``;
+    }
 
     let elems_table = document.getElementById("elems_table");
 
@@ -558,6 +572,13 @@ function courseButton() {
     let createButton = document.getElementById("createModalButton");
     createButton.removeAttribute("disabled");
     createButton.setAttribute("onclick", "createModalCourse()");
+
+    let search_string = document.getElementById("search_string");
+    search_string.setAttribute("placeholder", "Поиск");
+
+    if (document.getElementById("select_course") !== null) {
+        document.getElementById("courses_select").innerHTML = ``;
+    }
 
     let elems_table = document.getElementById("elems_table");
 
@@ -1054,6 +1075,36 @@ function studentButton() {
     let createButton = document.getElementById("createModalButton");
     createButton.setAttribute("disabled", "true");
 
+    let search_string = document.getElementById("search_string");
+    search_string.setAttribute("placeholder", "Поиск по фамилии");
+    
+    if (document.getElementById("select_course") === null) {
+        fetch(`/api/v1/admin/courses`)
+            .then(response => {
+                if (response.status === 200) {
+                    response.json().then(info => {
+                        let courses_select_elem = document.getElementById("courses_select");
+                        courses_select_elem.innerHTML = `<select id="select_course" class="form-select" aria-label="Курс">
+                            <option selected value="-1">&#60;Курс&#62;</option>
+                        </select>`;
+                        let select_course = document.getElementById("select_course");
+                        for (let course of info) {
+                            let elem = document.createElement("option");
+                            elem.innerText = course.name;
+                            elem.setAttribute("value", course.id);
+                            select_course.appendChild(elem);
+                        }
+                    })
+                } else if (response.status === 400) {
+                    showDangerToast("Проверьте правильность введенных данных", false);
+                } else if (response.status === 401) {
+                    window.location.replace("/login.html");
+                } else if (response.status === 500) {
+                    showDangerToast("Серверная ошибка, попробуйте позже", true);
+                }
+            })
+    }
+
     let elems_table = document.getElementById("elems_table");
 
     fetch(`/api/v1/admin/students`)
@@ -1303,8 +1354,9 @@ function saveUpdateModalStudent(id) {
 
 function searchStudent() {
     let search_string = document.getElementById("search_string").value;
+    let course = document.getElementById("select_course").value;
 
-    fetch(`/api/v1/admin/students?search=${search_string}`)
+    fetch(`/api/v1/admin/students?search=${search_string}&course=${course}`)
         .then(response => {
             if (response.status === 200) {
                 response.json().then(info => {

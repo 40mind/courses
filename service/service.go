@@ -99,22 +99,33 @@ func (s *Service) GetCourse(ctx context.Context, id int) (models.Course, error) 
     return s.Repository.GetCourse(ctx, id)
 }
 
-func (s *Service) GetStudents(ctx context.Context, searchStr string) ([]models.Student, error) {
+func (s *Service) GetStudents(ctx context.Context, course int, searchStr string) ([]models.Student, error) {
     students, err := s.Repository.GetStudents(ctx)
     if err != nil {
         return nil, err
     }
 
+    var courseSorted []models.Student
+    if course != -1 {
+        for _, student := range students {
+            if student.CourseId.Int64 == int64(course) {
+                courseSorted = append(courseSorted, student)
+            }
+        }
+    } else {
+        courseSorted = students
+    }
+
     var result []models.Student
     if searchStr != "" {
         searchStr = strings.ToLower(strings.TrimSpace(searchStr))
-        for _, student := range students {
+        for _, student := range courseSorted {
             if strings.Contains(strings.ToLower(student.Surname.String), searchStr) {
                 result = append(result, student)
             }
         }
     } else {
-        result = students
+        result = courseSorted
     }
 
     return result, nil
