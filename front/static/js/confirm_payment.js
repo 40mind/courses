@@ -8,7 +8,8 @@ fetch(`/api/v1/payment/confirm/${student_id}`, {
     if (response.status === 200) {
         let column = document.querySelector("div.col-5.text-center");
         column.innerHTML = `<h3>Оплачено успешно!</h3>
-                            <p>Информация о курсе поступит на вашу электронную почту. Спасибо за покупку!</p>`
+    <p>Информация о курсе поступит на вашу электронную почту. Спасибо за покупку!</p>
+    <button type="button" class="btn btn-outline-primary" onclick="location.href='/'">На главную</button>`
     } else if (response.status === 400) {
         showDangerToast("Курс не был оплачен, сначала оплатите курс", false);
     } else if (response.status === 500) {
