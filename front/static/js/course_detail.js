@@ -29,7 +29,7 @@ function printCourse(info) {
     let last_date = new Date(info.last_class_date);
     let l = Intl.DateTimeFormat("ru", {year: "numeric", month: "numeric", day: "numeric"}).format(last_date);
 
-    let card_body = document.querySelector("div.card-body");
+    let card_body = document.getElementById("card_body");
     card_body.innerHTML = `<h3 class="card-title text-center">${info.name}</h3>
                             <table class="table">
                                 <tbody>
@@ -53,12 +53,13 @@ function printCourse(info) {
                                         <th scope="row">Даты проведения курса</th>
                                         <td>${f} - ${l}</td>
                                     </tr>
-                                    <tr>
-                                        <td colspan="2">${info.info}</td>
-                                    </tr>
                                 </tbody>
                             </table>
                             <h5 class="text-center">Цена: ${info.price}</h5>`;
+
+    let card_info = document.getElementById("card_info");
+    card_info.innerHTML = `<h5 class="text-center">Описание</h5>
+    <p>${info.info}</p>`
 }
 
 function recordButton() {

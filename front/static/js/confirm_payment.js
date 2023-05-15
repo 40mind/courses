@@ -4,6 +4,7 @@ let student_id = urlParams.get('student');
 fetch(`/api/v1/payment/confirm/${student_id}`, {
     method: "POST"
 }).then(response => {
+    document.body.removeChild(document.getElementById("spinner"));
     if (response.status === 200) {
         let column = document.querySelector("div.col-5.text-center");
         column.innerHTML = `<h3>Оплачено успешно!</h3>
