@@ -51,7 +51,7 @@ function printAdmins(elems_table, info) {
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
                             <th scope="col">#</th>
-                            <th width="100%" scope="col" colspan="3">Логин</th>
+                            <th scope="col" colspan="3">Логин</th>
                         </tr>`;
         elems_table.appendChild(table_head_elem);
 
@@ -70,8 +70,8 @@ function printAdmins(elems_table, info) {
         for (let i = 0; i < info.length; i++) {
             let elem = document.createElement("tr");
             elem.innerHTML = `<th scope="col">${i + 1}</th>
-                                <td width="100%">${info[i].login}</td>
-                                <td><button class="btn btn-danger btn-sm" type="button" onclick="deleteAdmin(${info[i].id})">Удалить</button></td>`;
+                                <td>${info[i].login}</td>
+                                <td width="1%"><button class="btn btn-danger btn-sm" type="button" onclick="deleteAdmin(${info[i].id})">Удалить</button></td>`;
             table_body_elem.appendChild(elem);
         }
         elems_table.appendChild(table_body_elem);
@@ -250,6 +250,418 @@ function deleteAdmin(id) {
         });
 }
 
+function editorButton() {
+    let searchButton = document.getElementById("search_button");
+    searchButton.setAttribute("onclick", "searchEditor()");
+
+    let createButton = document.getElementById("createModalButton");
+    createButton.removeAttribute("disabled");
+    createButton.setAttribute("onclick", "createModalEditor()");
+
+    let search_string = document.getElementById("search_string");
+    search_string.setAttribute("placeholder", "Поиск");
+
+    if (document.getElementById("select_course") !== null) {
+        document.getElementById("courses_select").innerHTML = ``;
+    }
+
+    let elems_table = document.getElementById("elems_table");
+    fetch(`/api/v1/admin/editors`)
+        .then(response => {
+            if (response.status === 200) {
+                response.json().then(info => {
+                    printEditors(elems_table, info);
+                })
+            } else if (response.status === 400) {
+                showDangerToast("Проверьте правильность введенных данных", false);
+            } else if (response.status === 401) {
+                window.location.replace("/login.html");
+            } else if (response.status === 500) {
+                showDangerToast("Серверная ошибка, попробуйте позже", true);
+            }
+        });
+}
+
+function printEditors(elems_table, info) {
+    if (info !== null){
+        fetch(`/api/v1/admin/courses`)
+            .then(response => {
+                if (response.status === 200) {
+                    response.json().then(courses => {
+                        let table_head = document.querySelector("thead");
+                        if (table_head !== null) {
+                            elems_table.removeChild(table_head);
+                        }
+
+                        let table_head_elem = document.createElement("thead");
+                        table_head_elem.innerHTML = `<tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Логин</th>
+                            <th scope="col" colspan="3">Курсы</th>
+                        </tr>`;
+                        elems_table.appendChild(table_head_elem);
+
+                        let no_records_elem = document.getElementById("no_records");
+                        if (no_records_elem !== null) {
+                            let struct_list = document.getElementById("struct_list");
+                            struct_list.removeChild(no_records_elem);
+                        }
+
+                        let table_body = document.querySelector("tbody");
+                        if (table_body !== null) {
+                            elems_table.removeChild(table_body);
+                        }
+
+                        let table_body_elem = document.createElement("tbody");
+                        for (let i = 0; i < info.length; i++) {
+                            let result_courses = []
+                            for (let course of courses) {
+                                if (info[i].courses.includes(course.id)) {
+                                    result_courses.push(course.name)
+                                }
+                            }
+
+                            let elem = document.createElement("tr");
+                            elem.innerHTML = `<th scope="col">${i + 1}</th>
+                                <td>${info[i].login}</td>
+                                <td>${result_courses.join(", ")}</td>
+                                <td width="1%"><button class="btn btn-primary btn-sm" type="button" onclick="updateModalEditor(${info[i].id})">Редактировать</button></td>
+                                <td width="1%"><button class="btn btn-danger btn-sm" type="button" onclick="deleteEditor(${info[i].id})">Удалить</button></td>`;
+                            table_body_elem.appendChild(elem);
+                        }
+                        elems_table.appendChild(table_body_elem);
+                    })
+                } else if (response.status === 400) {
+                    showDangerToast("Проверьте правильность введенных данных", false);
+                } else if (response.status === 401) {
+                    window.location.replace("/login.html");
+                } else if (response.status === 500) {
+                    showDangerToast("Серверная ошибка, попробуйте позже", true);
+                }
+            });
+
+    } else {
+        let no_records_elem = document.getElementById("no_records");
+        if (no_records_elem === null) {
+            let struct_list = document.getElementById("struct_list");
+            let elem = document.createElement("div");
+            elem.className = "row justify-content-center text-center";
+            elem.setAttribute("id", "no_records");
+            elem.innerHTML = "<p>Соответствующие редакторы не были найдены</p>";
+            struct_list.appendChild(elem);
+        }
+    }
+}
+
+function createModalEditor() {
+    fetch(`/api/v1/admin/courses`)
+        .then(response => {
+            if (response.status === 200) {
+                response.json().then(courses => {
+                    let struct_list = document.getElementById("struct_list");
+                    let modal = document.getElementById("modal");
+                    if (modal !== null) {
+                        struct_list.removeChild(modal);
+                    }
+
+                    let modal_elem = document.createElement("div");
+                    modal_elem.className = "modal fade";
+                    modal_elem.id = "modal";
+                    modal_elem.setAttribute("data-bs-backdrop", "static");
+                    modal_elem.setAttribute("data-bs-keyboard", "false");
+                    modal_elem.setAttribute("tabindex", "-1");
+                    modal_elem.setAttribute("aria-labelledby", "modalLabel");
+                    modal_elem.setAttribute("aria-hidden", "true");
+                    modal_elem.innerHTML = `<div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Добавление редактора</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form novalidate>
+                                <div class="row justify-content-center">
+                                    <div class="col mb-1">
+                                        <label for="input_login" class="col-form-label-sm">Логин*</label>
+                                        <input type="text" class="form-control form-control-sm validation" id="input_login">
+                                        <div id="login_help" class="form-text text-danger"></div>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col mb-1">
+                                        <label for="input_password" class="col-form-label-sm">Пароль*</label>
+                                        <input type="password" class="form-control form-control-sm validation" id="input_password">
+                                        <div id="password_help" class="form-text text-danger"></div>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col mb-1">
+                                        <label for="input_repeat_password" class="col-form-label-sm">Повторите пароль*</label>
+                                        <input type="password" class="form-control form-control-sm validation" id="input_repeat_password">
+                                        <div id="repeat_password_help" class="form-text text-danger"></div>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col mb-1">
+                                        <label for="select_courses" class="col-form-label-sm">Курсы</label>
+                                        <select id="select_courses" multiple class="form-select form-select-sm" aria-label="Выбор курсов">
+                                        </select>
+                                        <div id="select_help" class="form-text text-danger"></div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="button_close_modal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="button" class="btn btn-primary" onclick="saveCreateModalEditor()">Сохранить</button>
+                        </div>
+                        </div>
+                    </div>`
+                    struct_list.appendChild(modal_elem);
+
+                    let select_elem = document.querySelector("select");
+                    for (let course of courses) {
+                        let option_elem = document.createElement("option");
+                        option_elem.setAttribute("value", course.id);
+                        option_elem.innerText = course.name;
+                        select_elem.appendChild(option_elem);
+                    }
+
+                    let modalToShow = new bootstrap.Modal(document.getElementById('modal'));
+                    modalToShow.show();
+                })
+            } else if (response.status === 400) {
+                showDangerToast("Проверьте правильность введенных данных", false);
+            } else if (response.status === 401) {
+                window.location.replace("/login.html");
+            } else if (response.status === 500) {
+                showDangerToast("Серверная ошибка, попробуйте позже", true);
+            }
+        });
+}
+
+function saveCreateModalEditor() {
+    let elems = document.querySelectorAll(".validation");
+    for (let elem of elems) {
+        let ind = elem.className.indexOf("border-danger");
+        if (ind !== -1) {
+            elem.className = elem.className.substring(0, ind - 1);
+            let danger_text = elem.nextElementSibling;
+            danger_text.innerText = "";
+        }
+    }
+
+    let is_validated = true;
+    for (let elem of elems) {
+        if (elem.value === null || elem.value === "") {
+            elem.className += " border-danger";
+            let danger_text = elem.nextElementSibling;
+            danger_text.innerText = "Поле не может быть пустым";
+            is_validated = false;
+        }
+    }
+
+    if (!is_validated) {
+        return;
+    }
+
+    if (document.getElementById("input_password").value !== document.getElementById("input_repeat_password").value) {
+        document.getElementById("input_password").className += " border-danger";
+
+        let rep_pas = document.getElementById("input_repeat_password");
+        rep_pas.className += " border-danger";
+        rep_pas.nextElementSibling.innerText = "Введенные пароли не совпадают";
+
+        is_validated = false;
+    }
+
+    if (!is_validated) {
+        return;
+    }
+
+    let options = document.querySelector("select.form-select").selectedOptions;
+    let courses = Array.from(options).map(({ value }) => Number(value));
+
+    let editor = {
+        login: document.getElementById("input_login").value,
+        password: document.getElementById("input_password").value,
+        courses: courses
+    }
+
+    fetch(`/api/v1/admin/editors`, {
+        method: "POST",
+        body: JSON.stringify(editor)
+    })
+        .then(response => {
+            if (response.status === 201) {
+                document.getElementById('button_close_modal').click();
+                showSuccessToast("Редактор успешно добавлен");
+                editorButton();
+            } else if (response.status === 400) {
+                showDangerToast("Проверьте правильность введенных данных", false);
+            } else if (response.status === 500) {
+                showDangerToast("Серверная ошибка, попробуйте позже", true);
+            }
+        });
+}
+
+function updateModalEditor(id) {
+    fetch(`/api/v1/admin/editors/${id}`)
+        .then(response => {
+            if (response.status === 200) {
+                response.json().then(info => {
+                    fetch(`/api/v1/admin/courses`)
+                        .then(response => {
+                            if (response.status === 200) {
+                                response.json().then(courses => {
+                                    let struct_list = document.getElementById("struct_list");
+                                    let modal = document.getElementById("modal");
+                                    if (modal !== null) {
+                                        struct_list.removeChild(modal);
+                                    }
+
+                                    let modal_elem = document.createElement("div");
+                                    modal_elem.className = "modal fade";
+                                    modal_elem.id = "modal";
+                                    modal_elem.setAttribute("data-bs-backdrop", "static");
+                                    modal_elem.setAttribute("data-bs-keyboard", "false");
+                                    modal_elem.setAttribute("tabindex", "-1");
+                                    modal_elem.setAttribute("aria-labelledby", "modalLabel");
+                                    modal_elem.setAttribute("aria-hidden", "true");
+                                    modal_elem.innerHTML = `<div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Редактирование редактора</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form novalidate>
+                                                <div class="row justify-content-center">
+                                                    <div class="col mb-1">
+                                                        <label for="input_login" class="col-form-label-sm">Логин*</label>
+                                                        <input readonly type="text" class="form-control-plaintext form-control-sm" id="input_login" value="${info.login}">
+                                                        <div id="login_help" class="form-text text-danger"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row justify-content-center">
+                                                    <div class="col mb-1">
+                                                        <label for="select_courses" class="col-form-label-sm">Курсы</label>
+                                                        <select id="select_courses" multiple class="form-select form-select-sm" aria-label="Выбор курсов">
+                                                        </select>
+                                                        <div id="select_help" class="form-text text-danger"></div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="button_close_modal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                            <button type="button" class="btn btn-primary" onclick="saveUpdateModalEditor(${id})">Сохранить</button>
+                                        </div>
+                                        </div>
+                                    </div>`
+                                    struct_list.appendChild(modal_elem);
+
+                                    let select_elem = document.querySelector("select");
+                                    for (let course of courses) {
+                                        let option_elem = document.createElement("option");
+                                        option_elem.setAttribute("value", course.id);
+                                        if (info.courses.includes(course.id)) {
+                                            option_elem.setAttribute("selected", "true");
+                                        }
+                                        option_elem.innerText = course.name;
+                                        select_elem.appendChild(option_elem);
+                                    }
+
+                                    let modalToShow = new bootstrap.Modal(document.getElementById('modal'));
+                                    modalToShow.show();
+                                })
+                            } else if (response.status === 400) {
+                                showDangerToast("Проверьте правильность введенных данных", false);
+                            } else if (response.status === 401) {
+                                window.location.replace("/login.html");
+                            } else if (response.status === 500) {
+                                showDangerToast("Серверная ошибка, попробуйте позже", true);
+                            }
+                        });
+                })
+            } else if (response.status === 400) {
+                showDangerToast("Проверьте правильность введенных данных", false);
+            } else if (response.status === 401) {
+                window.location.replace("/login.html");
+            } else if (response.status === 500) {
+                showDangerToast("Серверная ошибка, попробуйте позже", true);
+            }
+        });
+}
+
+function saveUpdateModalEditor(id) {
+    let options = document.querySelector("select.form-select").selectedOptions;
+    let courses = Array.from(options).map(({ value }) => Number(value));
+
+    let editor = {
+        courses: courses
+    }
+
+    fetch(`/api/v1/admin/editors/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(editor)
+    })
+        .then(response => {
+            if (response.status === 200) {
+                document.getElementById('button_close_modal').click();
+                showSuccessToast("Направление успешно отредактировано");
+                editorButton();
+            } else if (response.status === 400) {
+                showDangerToast("Проверьте правильность введенных данных", false);
+            } else if (response.status === 500) {
+                showDangerToast("Серверная ошибка, попробуйте позже", true);
+            }
+        });
+}
+
+function searchEditor() {
+    let search_string = document.getElementById("search_string").value;
+
+    fetch(`/api/v1/admin/editors?search=${search_string}`)
+        .then(response => {
+            if (response.status === 200) {
+                response.json().then(info => {
+                    let elems_table = document.getElementById("elems_table");
+                    let table_body = document.querySelector("tbody");
+                    if (table_body !== null) {
+                        elems_table.removeChild(table_body)
+                    }
+
+                    printEditors(elems_table, info);
+                })
+            } else if (response.status === 400) {
+                showDangerToast("Проверьте правильность введенных данных", false);
+            } else if (response.status === 401) {
+                window.location.replace("/login.html");
+            } else if (response.status === 500) {
+                showDangerToast("Серверная ошибка, попробуйте позже", true);
+            }
+        });
+}
+
+function deleteEditor(id) {
+    fetch(`/api/v1/admin/editors/${id}`, {
+        method: "DELETE"
+    })
+        .then(response => {
+            if (response.status === 200) {
+                showSuccessToast("Редактор был успешно удален");
+                editorButton();
+            } else if (response.status === 400) {
+                showDangerToast("Проверьте правильность введенных данных", false);
+            } else if (response.status === 401) {
+                window.location.replace("/login.html");
+            } else if (response.status === 500) {
+                showDangerToast("Серверная ошибка, попробуйте позже", true);
+            }
+        });
+}
+
 function directionsButton() {
     let searchButton = document.getElementById("search_button");
     searchButton.setAttribute("onclick", "searchDirection()");
@@ -293,7 +705,7 @@ function printDirections(elems_table, info) {
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>
-            <th scope="col" width="100%" colspan="3">Направление</th>
+            <th scope="col" colspan="3">Направление</th>
         </tr>`;
         elems_table.appendChild(table_head_elem);
 
@@ -312,9 +724,9 @@ function printDirections(elems_table, info) {
         for (let i = 0; i < info.length; i++) {
             let elem = document.createElement("tr");
             elem.innerHTML = `<th scope="col">${i + 1}</th>
-                                <td width="100%">${info[i].name}</td>
-                                <td><button class="btn btn-primary btn-sm" type="button" onclick="updateModalDirection(${info[i].id})">Редактировать</button></td>
-                                <td><button class="btn btn-danger btn-sm" type="button" onclick="deleteDirection(${info[i].id})">Удалить</button></td>`;
+                                <td>${info[i].name}</td>
+                                <td width="1%"><button class="btn btn-primary btn-sm" type="button" onclick="updateModalDirection(${info[i].id})">Редактировать</button></td>
+                                <td width="1%"><button class="btn btn-danger btn-sm" type="button" onclick="deleteDirection(${info[i].id})">Удалить</button></td>`;
             table_body_elem.appendChild(elem);
         }
         elems_table.appendChild(table_body_elem);
@@ -616,7 +1028,7 @@ function printCourses(elems_table, info) {
             <th scope="col">Дата последнего занятия</th>
             <th scope="col">Цена</th>
             <th scope="col">Направление</th>
-            <th width="30%" scope="col" colspan="3">Информация</th>
+            <th scope="col" colspan="3">Информация</th>
         </tr>`;
 
         elems_table.appendChild(table_head_elem);
@@ -648,9 +1060,9 @@ function printCourses(elems_table, info) {
                 <td>${l}</td>
                 <td>${info[i].price} рублей</td>
                 <td>${info[i].direction_name}</td>
-                <td width="30%">${(info[i].info !== null) ? info[i].info : ""}<td>
-                <td><button class="btn btn-primary btn-sm" type="button" onclick="updateModalCourse(${info[i].id})">Редактировать</button></td>
-                <td><button class="btn btn-danger btn-sm" type="button" onclick="deleteCourse(${info[i].id})">Удалить</button></td>`;
+                <td>${(info[i].info !== null) ? info[i].info : ""}<td>
+                <td width="1%"><button class="btn btn-primary btn-sm" type="button" onclick="updateModalCourse(${info[i].id})">Редактировать</button></td>
+                <td width="1%"><button class="btn btn-danger btn-sm" type="button" onclick="deleteCourse(${info[i].id})">Удалить</button></td>`;
             table_body_elem.appendChild(elem);
         }
         elems_table.appendChild(table_body_elem);
@@ -749,8 +1161,8 @@ function createModalCourse() {
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col mb-1">
-                                        <label for="input_info" class="col-form-label-sm">Информация</label>
-                                        <textarea class="form-control form-control-sm" id="input_info" rows="3"></textarea>
+                                        <label for="input_info" class="col-form-label-sm">Информация*</label>
+                                        <textarea class="form-control form-control-sm validation" id="input_info" rows="3"></textarea>
                                         <div id="info_help" class="form-text text-danger"></div>
                                     </div>
                                 </div>
@@ -814,7 +1226,7 @@ function saveCreateModalCourse() {
         name: document.getElementById("input_name").value,
         num_of_classes: document.getElementById("input_num").value,
         class_time: document.getElementById("input_class_time").value,
-        week_days: document.getElementById("input_class_time").value,
+        week_days: document.getElementById("input_week_days").value,
         first_class_date: document.getElementById("input_first_date").value === null ? null : new Date(document.getElementById("input_first_date").value),
         last_class_date: document.getElementById("input_last_date").value === null ? null : new Date(document.getElementById("input_last_date").value),
         price: document.getElementById("input_price").value,
@@ -1000,7 +1412,7 @@ function saveUpdateModalCourse(id) {
         name: document.getElementById("input_name").value,
         num_of_classes: document.getElementById("input_num").value,
         class_time: document.getElementById("input_class_time").value,
-        week_days: document.getElementById("input_class_time").value,
+        week_days: document.getElementById("input_week_days").value,
         first_class_date: document.getElementById("input_first_date").value === null ? null : new Date(document.getElementById("input_first_date").value),
         last_class_date: document.getElementById("input_last_date").value === null ? null : new Date(document.getElementById("input_last_date").value),
         price: document.getElementById("input_price").value,
@@ -1168,12 +1580,12 @@ function printStudents(elems_table, info) {
                 <td>${info[i].patronymic === null ? "" : info[i].patronymic}</td>
                 <td>${info[i].email === null ? "" : info[i].email}</td>
                 <td>${info[i].phone === null ? "" : info[i].phone}</td>
-                <td>${info[i].payment === null ? "Нет" : "Да"}</td>
+                <td>${info[i].payment === null || info[i].payment === false ? "Нет" : "Да"}</td>
                 <td>${info[i].date_of_payment === null ? "" : p}</td>
                 <td>${info[i].course_name === null ? "" : info[i].course_name}</td>
                 <td>${info[i].comment === null ? "" : info[i].comment}</td>
-                <td><button class="btn btn-primary btn-sm" type="button" onclick="updateModalStudent(${info[i].id})">Редактировать</button></td>
-                <td><button class="btn btn-danger btn-sm" type="button" onclick="deleteStudent(${info[i].id})">Удалить</button></td>`;
+                <td width="1%"><button class="btn btn-primary btn-sm" type="button" onclick="updateModalStudent(${info[i].id})">Редактировать</button></td>
+                <td width="1%"><button class="btn btn-danger btn-sm" type="button" onclick="deleteStudent(${info[i].id})">Удалить</button></td>`;
             table_body_elem.appendChild(elem);
         }
         elems_table.appendChild(table_body_elem);
@@ -1256,7 +1668,7 @@ function updateModalStudent(id) {
                                 <div class="row justify-content-center">
                                     <div class="col mb-1 d-flex align-items-center justify-content-center">
                                         <label for="input_payment" class="form-check-label">Оплата</label>
-                                        <input class="form-check-input" type="checkbox" id="input_payment" ${info.payment === null ? "" : "checked" }>
+                                        <input class="form-check-input" type="checkbox" id="input_payment" ${info.payment === null || info.payment === false ? "" : "checked" }>
                                         <div id="payment_help" class="form-text text-danger"></div>
                                     </div>
                                     <div class="col mb-1">

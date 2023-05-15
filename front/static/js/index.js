@@ -1,25 +1,19 @@
 let admin_buttons = document.getElementById("admin_buttons");
 if (getCookie("admin-session") !== undefined) {
-    let elemAdminPanel = document.createElement("a");
-    elemAdminPanel.className = "nav-link active d-flex";
-    elemAdminPanel.setAttribute("aria-current", "page");
-    elemAdminPanel.setAttribute("href", "/admin_panel.html");
-    elemAdminPanel.innerText = "Панель администратора";
-    admin_buttons.appendChild(elemAdminPanel);
-
-    let elemAdminLogout = document.createElement("a");
-    elemAdminLogout.className = "nav-link active d-flex";
-    elemAdminLogout.setAttribute("aria-current", "page");
-    elemAdminLogout.setAttribute("href", "/logout.html");
-    elemAdminLogout.innerText = "Выход";
-    admin_buttons.appendChild(elemAdminLogout);
+    admin_buttons.innerHTML = `<div class="btn-group-vertical border-0" role="group" aria-label="Группа вертикальных кнопок">
+        <button type="button" class="btn btn-outline-primary" onclick="location.href='/admin_panel.html'">Панель администратора</button>
+        <button type="button" class="btn btn-outline-primary" onclick="logout()">Выход</button>
+    </div>`
+} else if (getCookie("editor-session") !== undefined) {
+    admin_buttons.innerHTML = `<div class="btn-group-vertical border-0" role="group" aria-label="Группа вертикальных кнопок">
+        <button type="button" class="btn btn-outline-primary" onclick="location.href='/editor_panel.html'">Панель редактора</button>
+        <button type="button" class="btn btn-outline-primary" onclick="logout()">Выход</button>
+    </div>`
 } else {
-    let elem = document.createElement("a");
-    elem.className = "nav-link active d-flex";
-    elem.setAttribute("aria-current", "page");
-    elem.setAttribute("href", "/login.html");
-    elem.innerText = "Вход для администратора";
-    admin_buttons.appendChild(elem);
+    admin_buttons.innerHTML = `<div class="btn-group-vertical border-0" role="group" aria-label="Группа вертикальных кнопок">
+        <button type="button" class="btn btn-outline-primary" onclick="location.href='/login.html'">Вход для администратора</button>
+        <button type="button" class="btn btn-outline-primary" onclick="location.href='/editor_login.html'">Вход для редактора</button>
+    </div>`
 }
 
 fetch("/api/v1")
@@ -100,6 +94,36 @@ function printCourses(courses_row, info) {
             elem.innerHTML = "<p>Соответствующие курсы не были найдены</p>";
             document.body.appendChild(elem);
         }
+    }
+}
+
+function logout() {
+    if (getCookie("admin-session") !== undefined) {
+        fetch(`/api/v1/admin/logout`, {
+            method: "POST"
+        })
+            .then(response => {
+                if (response.status === 500) {
+                    showDangerToast("Серверная ошибка, попробуйте позже", true);
+                    return;
+                }
+
+                location.reload();
+            });
+    }
+
+    if (getCookie("editor-session") !== undefined) {
+        fetch(`/api/v1/editor/logout`, {
+            method: "POST"
+        })
+            .then(response => {
+                if (response.status === 500) {
+                    showDangerToast("Серверная ошибка, попробуйте позже", true);
+                    return;
+                }
+
+                location.reload();
+            });
     }
 }
 

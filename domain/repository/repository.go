@@ -6,6 +6,7 @@ import (
     "database/sql"
     "fmt"
     "github.com/jimlawless/whereami"
+    "github.com/lib/pq"
     "gopkg.in/guregu/null.v4"
     "log"
     "time"
@@ -458,6 +459,139 @@ func (rep *Repository) GetAdmin(ctx context.Context, id int) (models.Admin, erro
 
 func (rep *Repository) DeleteAdmin(ctx context.Context, id int) error {
     query := `SELECT * FROM graduate_work.delete_admin($1)`
+
+    _, err := rep.DB.ExecContext(ctx, query, id)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
+func (rep *Repository) CreateEditor(ctx context.Context, editor models.Editor) error {
+    query := `SELECT * FROM graduate_work.create_editor($1, $2, $3)`
+
+    _, err := rep.DB.ExecContext(ctx, query, editor.Login, editor.Password, pq.Array(editor.Courses))
+    if err != nil {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
+func (rep *Repository) UpdateEditor(ctx context.Context, editor models.Editor) error {
+    query := `SELECT * FROM graduate_work.update_editor($1, $2)`
+
+    _, err := rep.DB.ExecContext(ctx, query, editor.Id, pq.Array(editor.Courses))
+    if err != nil {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return fmt.Errorf(DBError)
+    }
+
+    return nil
+}
+
+func (rep *Repository) CheckEditorAuth(ctx context.Context, login string) (models.Editor, error) {
+    query := `SELECT * FROM graduate_work.check_editor_auth($1)`
+
+    row := rep.DB.QueryRowContext(ctx, query, login)
+
+    var editor models.Editor
+    err := row.Scan(
+        &editor.Id,
+        &editor.Password,
+    )
+    if err != nil && err != sql.ErrNoRows {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return models.Editor{}, fmt.Errorf(DBError)
+    }
+
+    if err == sql.ErrNoRows {
+        return models.Editor{}, nil
+    }
+
+    return editor, nil
+}
+
+func (rep *Repository) GetEditors(ctx context.Context) ([]models.Editor, error) {
+    query := `SELECT * FROM graduate_work.get_editors()`
+
+    rows, err := rep.DB.QueryContext(ctx, query)
+    if err != nil {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return nil, fmt.Errorf(DBError)
+    }
+
+    var editors []models.Editor
+    for rows.Next() {
+        var editor models.Editor
+        err = rows.Scan(
+            &editor.Id,
+            &editor.Login,
+            pq.Array(&editor.Courses),
+        )
+
+        if err != nil && err != sql.ErrNoRows {
+            log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+            return nil, fmt.Errorf(DBError)
+        }
+
+        editors = append(editors, editor)
+    }
+
+    return editors, nil
+}
+
+func (rep *Repository) GetEditor(ctx context.Context, id int) (models.Editor, error) {
+    query := `SELECT * FROM graduate_work.get_editor($1)`
+
+    row := rep.DB.QueryRowContext(ctx, query, id)
+
+    var editor models.Editor
+    err := row.Scan(
+        &editor.Id,
+        &editor.Login,
+        pq.Array(&editor.Courses),
+    )
+    if err != nil && err != sql.ErrNoRows {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return models.Editor{}, fmt.Errorf(DBError)
+    }
+
+    if err == sql.ErrNoRows {
+        return models.Editor{}, nil
+    }
+
+    return editor, nil
+}
+
+func (rep *Repository) GetEditorByLogin(ctx context.Context, login string) (models.Editor, error) {
+    query := `SELECT * FROM graduate_work.get_editor_by_login($1)`
+
+    row := rep.DB.QueryRowContext(ctx, query, login)
+
+    var editor models.Editor
+    err := row.Scan(
+        &editor.Id,
+        &editor.Login,
+        pq.Array(&editor.Courses),
+    )
+    if err != nil && err != sql.ErrNoRows {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return models.Editor{}, fmt.Errorf(DBError)
+    }
+
+    if err == sql.ErrNoRows {
+        return models.Editor{}, nil
+    }
+
+    return editor, nil
+}
+
+func (rep *Repository) DeleteEditor(ctx context.Context, id int) error {
+    query := `SELECT * FROM graduate_work.delete_editor($1)`
 
     _, err := rep.DB.ExecContext(ctx, query, id)
     if err != nil {

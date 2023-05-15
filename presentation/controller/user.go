@@ -26,7 +26,7 @@ func (c *Controller) HomePage(w http.ResponseWriter, r *http.Request) {
         }
     }
 
-    courses, err := c.Service.GetCourses(r.Context(), dirInt, searchStr)
+    courses, err := c.Service.GetCourses(r.Context(), dirInt, searchStr, nil)
     if err != nil {
         writeResponse(w, nil, err, http.StatusInternalServerError)
         return
@@ -86,7 +86,7 @@ func (c *Controller) CoursePage(w http.ResponseWriter, r *http.Request) {
     writeResponse(w, responseJson, nil, http.StatusOK)
 }
 
-func (c *Controller) CreateStudent(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) StudentCreate(w http.ResponseWriter, r *http.Request) {
     splitURL := strings.Split(r.URL.Path, "/")
     id, err := strconv.Atoi(splitURL[len(splitURL)-1])
     if err != nil {

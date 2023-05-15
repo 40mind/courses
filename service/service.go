@@ -63,7 +63,7 @@ func (s *Service) GetDirection(ctx context.Context, id int) (models.Direction, e
     return s.Repository.GetDirection(ctx, id)
 }
 
-func (s *Service) GetCourses(ctx context.Context, direction int, searchStr string) ([]models.Course, error) {
+func (s *Service) GetCourses(ctx context.Context, direction int, searchStr string, courseIds []int64) ([]models.Course, error) {
     courses, err := s.Repository.GetCourses(ctx)
     if err != nil {
         return nil, err
@@ -80,16 +80,27 @@ func (s *Service) GetCourses(ctx context.Context, direction int, searchStr strin
         dirSorted = courses
     }
 
+    var courSorted []models.Course
+    if courseIds != nil {
+        for _, course := range dirSorted {
+            if contains(courseIds, course.Id.Int64) {
+                courSorted = append(courSorted, course)
+            }
+        }
+    } else {
+        courSorted = dirSorted
+    }
+
     var result []models.Course
     if searchStr != "" {
         searchStr = strings.ToLower(strings.TrimSpace(searchStr))
-        for _, course := range dirSorted {
+        for _, course := range courSorted {
             if strings.Contains(strings.ToLower(course.Name.String), searchStr) {
                 result = append(result, course)
             }
         }
     } else {
-        result = dirSorted
+        result = courSorted
     }
 
     return result, nil
@@ -99,7 +110,7 @@ func (s *Service) GetCourse(ctx context.Context, id int) (models.Course, error) 
     return s.Repository.GetCourse(ctx, id)
 }
 
-func (s *Service) GetStudents(ctx context.Context, course int, searchStr string) ([]models.Student, error) {
+func (s *Service) GetStudents(ctx context.Context, course int, searchStr string, courses []int64) ([]models.Student, error) {
     students, err := s.Repository.GetStudents(ctx)
     if err != nil {
         return nil, err
@@ -116,16 +127,27 @@ func (s *Service) GetStudents(ctx context.Context, course int, searchStr string)
         courseSorted = students
     }
 
+    var coursesSorted []models.Student
+    if courses != nil {
+        for _, student := range courseSorted {
+            if contains(courses, student.CourseId.Int64) {
+                coursesSorted = append(coursesSorted, student)
+            }
+        }
+    } else {
+        coursesSorted = courseSorted
+    }
+
     var result []models.Student
     if searchStr != "" {
         searchStr = strings.ToLower(strings.TrimSpace(searchStr))
-        for _, student := range courseSorted {
+        for _, student := range coursesSorted {
             if strings.Contains(strings.ToLower(student.Surname.String), searchStr) {
                 result = append(result, student)
             }
         }
     } else {
-        result = courseSorted
+        result = coursesSorted
     }
 
     return result, nil
@@ -363,25 +385,112 @@ func (s *Service) DeleteAdmin(ctx context.Context, id int) error {
     return s.Repository.DeleteAdmin(ctx, id)
 }
 
-func (s *Service) AdminLogIn(ctx context.Context, login, password null.String) (models.Admin, error, int) {
-    err := validateField(login, "login"); if err != nil { return models.Admin{}, err, http.StatusBadRequest}
-    err = validateField(login, "password"); if err != nil { return models.Admin{}, err, http.StatusBadRequest}
+func (s *Service) AdminLogIn(ctx context.Context, login, password null.String) (error, int) {
+    err := validateField(login, "login"); if err != nil { return err, http.StatusBadRequest}
+    err = validateField(login, "password"); if err != nil { return err, http.StatusBadRequest}
 
     admin, err := s.Repository.CheckAdminAuth(ctx, login.String)
     if err != nil {
-        return models.Admin{}, err, http.StatusInternalServerError
+        return err, http.StatusInternalServerError
     }
 
     nullAdmin := models.Admin{}
     if admin == nullAdmin {
-        return models.Admin{}, fmt.Errorf("no admin with given login and password"), http.StatusUnauthorized
+        return fmt.Errorf("no admin with given login and password"), http.StatusUnauthorized
     }
 
     err = bcrypt.CompareHashAndPassword([]byte(admin.Password.String), []byte(password.String))
     if err != nil {
         log.Println(err)
-        return models.Admin{}, err, http.StatusUnauthorized
+        return err, http.StatusUnauthorized
     }
 
-    return models.Admin{}, nil, http.StatusOK
+    return nil, http.StatusOK
+}
+
+func (s *Service) CreateEditor(ctx context.Context, editor models.Editor) (error, int) {
+    err := validateField(editor.Login, "login"); if err != nil { return err, http.StatusBadRequest}
+    err = validateField(editor.Password, "password"); if err != nil { return err, http.StatusBadRequest}
+
+    pass, err := bcrypt.GenerateFromPassword([]byte(editor.Password.String), bcrypt.DefaultCost)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+    editor.Password = null.StringFrom(string(pass))
+
+    err = s.Repository.CreateEditor(ctx, editor)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+
+    return nil, http.StatusCreated
+}
+
+func (s *Service) UpdateEditor(ctx context.Context, editor models.Editor) error {
+    return s.Repository.UpdateEditor(ctx, editor)
+}
+
+func (s *Service) GetEditors(ctx context.Context, searchStr string) ([]models.Editor, error) {
+    editors, err := s.Repository.GetEditors(ctx)
+    if err != nil {
+        return nil, err
+    }
+
+    var result []models.Editor
+    if searchStr != "" {
+        searchStr = strings.ToLower(strings.TrimSpace(searchStr))
+        for _, editor := range editors {
+            if strings.Contains(strings.ToLower(editor.Login.String), searchStr) {
+                result = append(result, editor)
+            }
+        }
+    } else {
+        result = editors
+    }
+
+    return result, nil
+}
+
+func (s *Service) GetEditor(ctx context.Context, id int) (models.Editor, error) {
+    return s.Repository.GetEditor(ctx, id)
+}
+
+func (s *Service) GetEditorByLogin(ctx context.Context, login string) (models.Editor, error) {
+    return s.Repository.GetEditorByLogin(ctx, login)
+}
+
+func (s *Service) DeleteEditor(ctx context.Context, id int) error {
+    return s.Repository.DeleteEditor(ctx, id)
+}
+
+func (s *Service) EditorLogIn(ctx context.Context, login, password null.String) (error, int) {
+    err := validateField(login, "login"); if err != nil { return err, http.StatusBadRequest}
+    err = validateField(login, "password"); if err != nil { return err, http.StatusBadRequest}
+
+    editor, err := s.Repository.CheckEditorAuth(ctx, login.String)
+    if err != nil {
+        return err, http.StatusInternalServerError
+    }
+
+    if !editor.Id.Valid {
+        return fmt.Errorf("no editor with given login and password"), http.StatusUnauthorized
+    }
+
+    err = bcrypt.CompareHashAndPassword([]byte(editor.Password.String), []byte(password.String))
+    if err != nil {
+        log.Println(err)
+        return err, http.StatusUnauthorized
+    }
+
+    return nil, http.StatusOK
+}
+
+func contains(i []int64, num int64) bool {
+    for _, v := range i {
+        if v == num {
+            return true
+        }
+    }
+
+    return false
 }

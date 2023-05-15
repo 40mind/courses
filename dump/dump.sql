@@ -7,6 +7,14 @@ create table if not exists graduate_work.administrators
     password varchar(250) not null
 );
 
+create table if not exists graduate_work.editors
+(
+    id serial primary key not null,
+    login varchar(50) not null unique,
+    password varchar(250) not null,
+    courses int[] not null
+);
+
 create table if not exists graduate_work.directions
 (
     id serial primary key not null,
@@ -114,6 +122,83 @@ begin
         select a.id, a.password
         from graduate_work.administrators a
         where a.login = _login;
+end
+$$;
+
+create or replace function graduate_work.create_editor(_login varchar, _password varchar, _courses int[])
+    returns void
+    language plpgsql as
+$$
+begin
+    insert into graduate_work.editors(login, password, courses)
+    values (_login, _password, _courses);
+end
+$$;
+
+create or replace function graduate_work.update_editor(_id int, _courses int[])
+    returns void
+    language plpgsql as
+$$
+begin
+    update graduate_work.editors set
+        courses = _courses
+    where id = _id;
+end
+$$;
+
+create or replace function graduate_work.get_editors()
+    returns table (id int, login varchar, courses int[])
+    language plpgsql as
+$$
+begin
+    return query
+        select e.id, e.login, e.courses
+        from graduate_work.editors e;
+end
+$$;
+
+create or replace function graduate_work.get_editor(_id int)
+    returns table(id int, login varchar, courses int[])
+    language plpgsql as
+$$
+begin
+    return query
+        select e.id, e.login, e.courses
+        from graduate_work.editors e
+        where e.id = _id;
+end
+$$;
+
+create or replace function graduate_work.get_editor_by_login(_login varchar)
+    returns table(id int, login varchar, courses int[])
+    language plpgsql as
+$$
+begin
+    return query
+        select e.id, e.login, e.courses
+        from graduate_work.editors e
+        where e.login = _login;
+end
+$$;
+
+create or replace function graduate_work.delete_editor(_id int)
+    returns void
+    language plpgsql as
+$$
+begin
+    delete from graduate_work.editors where id = _id;
+end
+$$;
+
+create or replace function graduate_work.check_editor_auth(_login varchar)
+    returns table(id int, password varchar)
+    language plpgsql as
+$$
+begin
+    return query
+        select e.id, e.password
+        from graduate_work.editors e
+        where e.login = _login;
 end
 $$;
 
@@ -322,7 +407,7 @@ end
 $$;
 
 create or replace function graduate_work.update_student(_id int, _name varchar, _surname varchar, _patronymic varchar, _email varchar,
-    _phone varchar, _comment text, _payment bool, _payment_uuid varchar, _yookassa_uuid varchar, _date_of_payment timestamp)
+    _phone varchar, _comment text, _payment bool, _date_of_payment timestamp)
     returns void
     language plpgsql as
 $$
@@ -335,8 +420,6 @@ begin
         phone = _phone,
         comment = _comment,
         payment = _payment,
-        payment_uuid = _payment_uuid,
-        yookassa_uuid = _yookassa_uuid,
         date_of_payment = _date_of_payment
     where id = _id;
 end
