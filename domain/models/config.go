@@ -8,6 +8,7 @@ type Config struct {
 	Email               Email
 	YookassaProvider    Provider
 	YookassaAuth        Auth
+	DefaultAdmin        Auth
 }
 
 type Application struct {
