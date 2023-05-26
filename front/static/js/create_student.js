@@ -1,5 +1,5 @@
-const urlParams = new URLSearchParams(window.location.search);
-let student_id = urlParams.get('student');
+let pathArray = window.location.pathname.split("/")
+let student_id = pathArray[pathArray.length - 1];
 
 fetch(`/api/v1/payment/create/${student_id}`, {
     method: "POST"

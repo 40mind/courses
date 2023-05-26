@@ -1,18 +1,18 @@
 let admin_buttons = document.getElementById("admin_buttons");
 if (getCookie("admin-session") !== undefined) {
     admin_buttons.innerHTML = `<div class="btn-group-vertical border-0" role="group" aria-label="Группа вертикальных кнопок">
-        <button type="button" class="btn btn-outline-primary" onclick="location.href='/admin_panel.html'">Панель администратора</button>
+        <button type="button" class="btn btn-outline-primary" onclick="location.href='/admin/panel'">Панель администратора</button>
         <button type="button" class="btn btn-outline-primary" onclick="logout()">Выход</button>
     </div>`
 } else if (getCookie("editor-session") !== undefined) {
     admin_buttons.innerHTML = `<div class="btn-group-vertical border-0" role="group" aria-label="Группа вертикальных кнопок">
-        <button type="button" class="btn btn-outline-primary" onclick="location.href='/editor_panel.html'">Панель редактора</button>
+        <button type="button" class="btn btn-outline-primary" onclick="location.href='/editor/panel'">Панель редактора</button>
         <button type="button" class="btn btn-outline-primary" onclick="logout()">Выход</button>
     </div>`
 } else {
     admin_buttons.innerHTML = `<div class="btn-group-vertical border-0" role="group" aria-label="Группа вертикальных кнопок">
-        <button type="button" class="btn btn-outline-primary" onclick="location.href='/login.html'">Вход для администратора</button>
-        <button type="button" class="btn btn-outline-primary" onclick="location.href='/editor_login.html'">Вход для редактора</button>
+        <button type="button" class="btn btn-outline-primary" onclick="location.href='/admin/login'">Вход для администратора</button>
+        <button type="button" class="btn btn-outline-primary" onclick="location.href='/editor/login'">Вход для редактора</button>
     </div>`
 }
 
@@ -79,7 +79,7 @@ function printCourses(courses_row, info) {
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">Направление: ${course.direction_name}</li>
                                 <li class="list-group-item">Цена: ${course.price}</li>
-                                <a class="btn btn-primary" href="/course_detail.html?course=${course.id}" role="button">Подробнее</a>
+                                <a class="btn btn-primary" href="/course/${course.id}" role="button">Подробнее</a>
                             </ul>
                         </div>
                     </div>`;

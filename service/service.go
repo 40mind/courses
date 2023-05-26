@@ -268,7 +268,7 @@ func (s *Service) CreatePayment(ctx context.Context, id int, redirectHost string
         Capture:      null.BoolFrom(true),
         Confirmation: models.Confirmation{
             Type:            null.StringFrom("redirect"),
-            ReturnUrl:       null.StringFrom(redirectHost + "/confirm_payment.html?student=" + strconv.Itoa(int(student.Id.Int64))),
+            ReturnUrl:       null.StringFrom(redirectHost + "/student/payment/" + strconv.Itoa(int(student.Id.Int64))),
         },
         Description:  null.StringFrom("Оплата курса " + course.Name.String + ", заказчик " + student.Surname.String + " " + student.Name.String),
         Metadata:     map[string]string{

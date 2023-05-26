@@ -5,6 +5,9 @@ import (
 )
 
 func writeResponse(w http.ResponseWriter, body []byte, err error, status int) {
+	if body != nil {
+		w.Header().Set("Content-Type", "application/json")
+	}
 	w.WriteHeader(status)
 
 	if err == nil {

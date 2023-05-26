@@ -1,5 +1,5 @@
-const urlParams = new URLSearchParams(window.location.search);
-let course_id = urlParams.get('course');
+let pathArray = window.location.pathname.split("/")
+let course_id = pathArray[pathArray.length - 1];
 const container = document.getElementById("course_container");
 
 if (course_id === null) {
@@ -100,7 +100,7 @@ function recordButton() {
         .then(response => {
             if (response.status === 201) {
                 response.json().then(id => {
-                    window.location.replace(`/create_student.html?student=${id.student_id}`);
+                    window.location.replace(`/student/record/${id.student_id}`);
                 });
             } else if (response.status === 400) {
                 response.text().then(err => {

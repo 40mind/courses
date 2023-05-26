@@ -3,7 +3,7 @@ fetch(`/api/v1/admin`)
         if (response.status === 400) {
             showDangerToast("Проверьте правильность введенных данных", false);
         } if (response.status === 401) {
-            window.location.replace("/login.html");
+            window.location.replace("/admin/login");
         } else if (response.status === 500) {
             showDangerToast("Серверная ошибка, попробуйте позже", true);
         }
@@ -34,7 +34,7 @@ function adminButton() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -225,7 +225,7 @@ function searchAdmin() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -243,7 +243,7 @@ function deleteAdmin(id) {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -275,7 +275,7 @@ function editorButton() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -334,7 +334,7 @@ function printEditors(elems_table, info) {
                 } else if (response.status === 400) {
                     showDangerToast("Проверьте правильность введенных данных", false);
                 } else if (response.status === 401) {
-                    window.location.replace("/login.html");
+                    window.location.replace("/admin/login");
                 } else if (response.status === 500) {
                     showDangerToast("Серверная ошибка, попробуйте позже", true);
                 }
@@ -433,7 +433,7 @@ function createModalEditor() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -578,7 +578,7 @@ function updateModalEditor(id) {
                             } else if (response.status === 400) {
                                 showDangerToast("Проверьте правильность введенных данных", false);
                             } else if (response.status === 401) {
-                                window.location.replace("/login.html");
+                                window.location.replace("/admin/login");
                             } else if (response.status === 500) {
                                 showDangerToast("Серверная ошибка, попробуйте позже", true);
                             }
@@ -587,7 +587,7 @@ function updateModalEditor(id) {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -637,7 +637,7 @@ function searchEditor() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -655,7 +655,7 @@ function deleteEditor(id) {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -688,7 +688,7 @@ function directionsButton() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -834,7 +834,7 @@ function saveCreateModalDirection() {
 }
 
 function updateModalDirection(id) {
-    fetch(`api/v1/admin/directions/${id}`)
+    fetch(`/api/v1/admin/directions/${id}`)
         .then(response => {
             if (response.status === 200) {
                 response.json().then(info => {
@@ -952,7 +952,7 @@ function searchDirection() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -970,7 +970,7 @@ function deleteDirection(id) {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -1003,7 +1003,7 @@ function courseButton() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -1190,7 +1190,7 @@ function createModalCourse() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -1252,7 +1252,7 @@ function saveCreateModalCourse() {
 }
 
 function updateModalCourse(id) {
-    fetch(`api/v1/admin/courses/${id}`)
+    fetch(`/api/v1/admin/courses/${id}`)
         .then(response => {
             if (response.status === 200) {
                 response.json().then(info => {
@@ -1369,7 +1369,7 @@ function updateModalCourse(id) {
                             } else if (response.status === 400) {
                                 showDangerToast("Проверьте правильность введенных данных", false);
                             } else if (response.status === 401) {
-                                window.location.replace("/login.html");
+                                window.location.replace("/admin/login");
                             } else if (response.status === 500) {
                                 showDangerToast("Серверная ошибка, попробуйте позже", true);
                             }
@@ -1455,7 +1455,7 @@ function searchCourse() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -1473,7 +1473,7 @@ function deleteCourse(id) {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -1510,7 +1510,7 @@ function studentButton() {
                 } else if (response.status === 400) {
                     showDangerToast("Проверьте правильность введенных данных", false);
                 } else if (response.status === 401) {
-                    window.location.replace("/login.html");
+                    window.location.replace("/admin/login");
                 } else if (response.status === 500) {
                     showDangerToast("Серверная ошибка, попробуйте позже", true);
                 }
@@ -1528,7 +1528,7 @@ function studentButton() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -1603,7 +1603,7 @@ function printStudents(elems_table, info) {
 }
 
 function updateModalStudent(id) {
-    fetch(`api/v1/admin/students/${id}`)
+    fetch(`/api/v1/admin/students/${id}`)
         .then(response => {
             if (response.status === 200) {
                 response.json().then(info => {
@@ -1783,7 +1783,7 @@ function searchStudent() {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
@@ -1801,7 +1801,7 @@ function deleteStudent(id) {
             } else if (response.status === 400) {
                 showDangerToast("Проверьте правильность введенных данных", false);
             } else if (response.status === 401) {
-                window.location.replace("/login.html");
+                window.location.replace("/admin/login");
             } else if (response.status === 500) {
                 showDangerToast("Серверная ошибка, попробуйте позже", true);
             }
