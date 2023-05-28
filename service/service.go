@@ -327,10 +327,9 @@ func (s *Service) ConfirmPayment(ctx context.Context, id int) (error, int) {
         return err, http.StatusInternalServerError
     }
 
-    err = s.EmailSender.SendMessage("Запись на курс " + student.CourseName.String,
-        "Оплата прошла успешно, ожидайте начала курса. Курс: " + student.CourseName.String +
-        ", дата первого занятия: " + course.FirstClassDate.Time.Format("02.01.2006 15:04") + ".",
-        student.Email.String)
+    err = s.EmailSender.SendMessage("Подтверждение записи на курс: " + student.CourseName.String,
+        student.CourseName.String, student.Surname.String + " " + student.Name.String + " " + student.Patronymic.String,
+        course.FirstClassDate.Time.Format("02.01.2006"), student.Email.String)
     if err != nil {
         return err, http.StatusInternalServerError
     }

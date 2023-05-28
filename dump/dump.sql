@@ -51,25 +51,25 @@ create table if not exists graduate_work.students
     course int references graduate_work.courses (id) on delete cascade
 );
 
-create role administrator;
-grant connect on database courses to administrator;
-grant all privileges on schema graduate_work to administrator;
-
-create role web_app;
-grant connect on database courses to web_app;
-grant usage on schema graduate_work to web_app;
-grant execute on all functions in schema graduate_work to web_app;
-grant select on all tables in schema graduate_work to web_app;
-grant insert on all tables in schema graduate_work to web_app;
-grant update on all tables in schema graduate_work to web_app;
-grant delete on all tables in schema graduate_work to web_app;
-grant usage on all sequences in schema graduate_work to web_app;
-
-create user admin_ivan with password 'ivanbestadmin';
-grant administrator to admin_ivan;
-
-create user courses_web_app with password 'passwordforwebapp';
-grant web_app to courses_web_app;
+-- create role administrator;
+-- grant connect on database courses to administrator;
+-- grant all privileges on schema graduate_work to administrator;
+--
+-- create role web_app;
+-- grant connect on database courses to web_app;
+-- grant usage on schema graduate_work to web_app;
+-- grant execute on all functions in schema graduate_work to web_app;
+-- grant select on all tables in schema graduate_work to web_app;
+-- grant insert on all tables in schema graduate_work to web_app;
+-- grant update on all tables in schema graduate_work to web_app;
+-- grant delete on all tables in schema graduate_work to web_app;
+-- grant usage on all sequences in schema graduate_work to web_app;
+--
+-- create user admin_ivan with password 'ivanbestadmin';
+-- grant administrator to admin_ivan;
+--
+-- create user courses_web_app with password 'passwordforwebapp';
+-- grant web_app to courses_web_app;
 
 create or replace function graduate_work.create_admin(_login varchar, _password varchar)
     returns void
@@ -457,13 +457,3 @@ begin
     where id = _id;
 end
 $$;
-
-insert into graduate_work.directions(name) values
-   ('Переквалификация'),
-   ('Обучение'),
-   ('Повышение');
-
-insert into graduate_work.courses(name, direction, num_of_classes, class_time, week_days, first_class_date, last_class_date, price, info) values
-    ('Переводчик',1,10,90,'Понедельник, Среда', '2022-10-15 15:00:00', '2022-12-15 15:00:00', 30000, 'Курсы для переводчиков'),
-    ('Физика',2,20,45,'Понедельник, Пятница', '2022-10-10 12:00:00', '2022-12-10 12:00:00', 45000, 'Курсы по физике для школьников'),
-    ('Готовка',3,5,100,'Понедельник', '2022-10-20 18:00:00', '2022-12-20 18:00:00', 10000, 'Курсы для повышения навыков готовки');
