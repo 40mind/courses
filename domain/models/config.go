@@ -17,6 +17,7 @@ type Application struct {
 }
 
 type Server struct {
+	Scheme          string
 	Host            string
 	Port			string
 }

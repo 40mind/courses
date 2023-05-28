@@ -140,7 +140,7 @@ func (c *Controller) CreatePayment(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    paymentUrl, err, status := c.Service.CreatePayment(r.Context(), id, c.config.Server.Host)
+    paymentUrl, err, status := c.Service.CreatePayment(r.Context(), id, c.config.Server.Scheme + c.config.Server.Host)
     if err != nil {
         writeResponse(w, nil, err, status)
         return

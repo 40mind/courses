@@ -3,6 +3,8 @@
 	Version = "0.0.1"
 
 [Server]
+	Scheme = "http://"
+	Host = "localhost"
 	Port = ":80"
 
 [DB]

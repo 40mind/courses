@@ -270,7 +270,8 @@ func (s *Service) CreatePayment(ctx context.Context, id int, redirectHost string
             Type:            null.StringFrom("redirect"),
             ReturnUrl:       null.StringFrom(redirectHost + "/student/payment/" + strconv.Itoa(int(student.Id.Int64))),
         },
-        Description:  null.StringFrom("Оплата курса " + course.Name.String + ", заказчик " + student.Surname.String + " " + student.Name.String),
+        Description:  null.StringFrom("Оплата курса: " + course.Name.String + ", заказчик: " + student.Surname.String + " " + student.Name.String + " " + student.Patronymic.String +
+            ", почта: " + student.Email.String),
         Metadata:     map[string]string{
             "studentId": strconv.Itoa(int(student.Id.Int64)),
         },

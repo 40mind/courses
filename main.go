@@ -33,7 +33,7 @@ func main() {
 	})
 
 	log.Printf("server started on port %s\n", config.Server.Port)
-	log.Fatal(http.ListenAndServe(config.Server.Port, c.Handler(r)))
+	log.Fatal(http.ListenAndServe(config.Server.Host + config.Server.Port, c.Handler(r)))
 }
 
 func initAdmin(conf models.Config, svc *service.Service) {
