@@ -3,7 +3,6 @@ package infrastructure
 import (
     "encoding/base64"
     "net/smtp"
-    "strings"
 )
 
 type EmailSender struct {
@@ -13,10 +12,10 @@ type EmailSender struct {
     Port            string
 }
 
-func (sender EmailSender) SendMessage(subject, course, fio, firstDate string, emailAdresses ...string) error {
+func (sender EmailSender) SendMessage(subject, course, fio, firstDate string, emailAdress ...string) error {
     address := sender.Host + sender.Port
 
-    message := "To: " + strings.Join(emailAdresses, ",") + "\r\n" +
+    message := "To: " + emailAdress[0] + "\r\n" +
         "From: " + sender.From + "\r\n" +
         "Subject: " + subject + "\r\n" +
         "Content-Type: text/html; charset=\"UTF-8\"\r\n" +
@@ -74,13 +73,11 @@ func (sender EmailSender) SendMessage(subject, course, fio, firstDate string, em
         <p>Если у вас возникнут вопросы или требуется дополнительная информация, пожалуйста, свяжитесь с нами.</p>
         <div class="footer">
         <p>С уважением,</p>
-        <p>Команда сайта курсов</p>
+        <p>Команда сайта energy education</p>
     </div>
     </div>
     </body>
     </html>`))
 
-    return smtp.SendMail(address, sender.Auth, sender.From, emailAdresses, []byte(message))
+    return smtp.SendMail(address, sender.Auth, sender.From, emailAdress, []byte(message))
 }
-
-

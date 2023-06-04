@@ -1,38 +1,40 @@
 [Application]
-	Name = "courses"
-	Version = "0.0.1"
+    Name = "courses"
+    Version = "1.0.0"
 
 [Server]
-	Scheme = "http://"
-	Host = "localhost"
-	Port = ":80"
+    Scheme = "https://"
+    Ip = "from env"
+    Host = "from env"
+    Port = "from env"
 
 [DB]
-	User = "from env"
-	Password = "from env"
-	Name = "from env"
-	Driver = "postgres"
-	Host = "localhost"
-	Port = "5432"
+    User = "from env"
+    Password = "from env"
+    Name = "from env"
+    Driver = "postgres"
+    Host = "from env"
+    Port = ""
+    ModeString = ""
 
 [Session]
-	Key = "from env"
+    Key = "from env"
 
 [Email]
-	From = "from env"
-	Password = "from env"
-	Host = "smtp.yandex.ru"
-	Port = ":587"
+    From = "from env"
+    Password = "from env"
+    Host = "mail.netangels.ru"
+    Port = ":465"
 
 [YookassaProvider]
-	Host = "https://api.yookassa.ru/v3"
-	[YookassaProvider.Endpoint.CreatePayment]
-		Path = "/payments"
-		Method = "POST"
-	[YookassaProvider.Endpoint.GetPayment]
-		Path = "/payments"
-		Method = "GET"
+    Host = "https://api.yookassa.ru/v3"
+    [YookassaProvider.Endpoint.CreatePayment]
+        Path = "/payments"
+        Method = "POST"
+    [YookassaProvider.Endpoint.GetPayment]
+        Path = "/payments"
+        Method = "GET"
 
 [YookassaAuth]
-	Login = "from env"
-	Password = "from env"
+    Login = "from env"
+    Password = "from env"

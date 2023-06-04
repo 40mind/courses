@@ -5,6 +5,7 @@ import (
 	"courses/presentation/controller"
 	"github.com/gorilla/mux"
 	"net/http"
+	"path/filepath"
 )
 
 func NewRouter(c *controller.Controller) *mux.Router {
@@ -81,16 +82,16 @@ func addTechRoutes(r *mux.Router, c *controller.Controller) {
 }
 
 func addFrontRoutes(r *mux.Router) {
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, "./front/index.html")})
-	r.HandleFunc("/course/{id}", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, "./front/course_detail.html")})
-	r.HandleFunc("/student/record/{id}", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, "./front/create_student.html")})
-	r.HandleFunc("/student/payment/{id}", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, "./front/confirm_payment.html")})
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, filepath.Join("front", "index.html"))})
+	r.HandleFunc("/course/{id}", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, filepath.Join("front", "course_detail.html"))})
+	r.HandleFunc("/student/record/{id}", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, filepath.Join("front", "create_student.html"))})
+	r.HandleFunc("/student/payment/{id}", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, filepath.Join("front", "confirm_payment.html"))})
 
-	r.HandleFunc("/admin/login", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, "./front/login.html")})
-	r.HandleFunc("/admin/panel", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, "./front/admin_panel.html")})
+	r.HandleFunc("/admin/login", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, filepath.Join("front", "login.html"))})
+	r.HandleFunc("/admin/panel", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, filepath.Join("front", "admin_panel.html"))})
 
-	r.HandleFunc("/editor/login", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, "./front/editor_login.html")})
-	r.HandleFunc("/editor/panel", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, "./front/editor_panel.html")})
+	r.HandleFunc("/editor/login", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, filepath.Join("front", "editor_login.html"))})
+	r.HandleFunc("/editor/panel", func(w http.ResponseWriter, r *http.Request) {http.ServeFile(w, r, filepath.Join("front", "editor_panel.html"))})
 
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./front/static"))))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(filepath.Join("front", "static")))))
 }

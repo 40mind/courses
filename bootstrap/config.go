@@ -6,11 +6,21 @@ import (
 	"github.com/jimlawless/whereami"
 	"log"
 	"os"
+	"path/filepath"
 )
 
-const configPath = "./configs/config.toml"
-
 func InitConfig() models.Config {
+	dev, ok := os.LookupEnv("DEVELOPMENT"); if !ok {
+		log.Fatalf("init config error: %s", whereami.WhereAmI())
+	}
+
+	configPath := ""
+	if dev == "true" {
+		configPath = filepath.Join("configs", "config.dev.toml")
+	} else {
+		configPath = filepath.Join("configs", "config.toml")
+	}
+
 	var config models.Config
 	_, err := toml.DecodeFile(configPath, &config)
 	if err != nil {
@@ -24,13 +34,16 @@ func InitConfig() models.Config {
 
 func getEnv(config *models.Config) {
 	var ok bool
-	config.DB.User, ok = os.LookupEnv("DB_USER"); if !ok {
+	config.DB.User, ok = os.LookupEnv("DBUSER"); if !ok {
 		log.Fatalf("init config error: %s", whereami.WhereAmI())
 	}
-	config.DB.Password, ok = os.LookupEnv("DB_PASSWORD"); if !ok {
+	config.DB.Password, ok = os.LookupEnv("DBPASS"); if !ok {
 		log.Fatalf("init config error: %s", whereami.WhereAmI())
 	}
-	config.DB.Name, ok = os.LookupEnv("DB_NAME"); if !ok {
+	config.DB.Host, ok = os.LookupEnv("DBHOST"); if !ok {
+		log.Fatalf("init config error: %s", whereami.WhereAmI())
+	}
+	config.DB.Name, ok = os.LookupEnv("DBNAME"); if !ok {
 		log.Fatalf("init config error: %s", whereami.WhereAmI())
 	}
 	config.Session.Key, ok = os.LookupEnv("SESSION_KEY"); if !ok {
@@ -52,6 +65,15 @@ func getEnv(config *models.Config) {
 		log.Fatalf("init config error: %s", whereami.WhereAmI())
 	}
 	config.DefaultAdmin.Password, ok = os.LookupEnv("DEFAULT_ADMIN_PASSWORD"); if !ok {
+		log.Fatalf("init config error: %s", whereami.WhereAmI())
+	}
+	config.Server.Ip, ok = os.LookupEnv("APP_IP"); if !ok {
+		log.Fatalf("init config error: %s", whereami.WhereAmI())
+	}
+	config.Server.Host, ok = os.LookupEnv("APP_HOST"); if !ok {
+		log.Fatalf("init config error: %s", whereami.WhereAmI())
+	}
+	config.Server.Port, ok = os.LookupEnv("APP_PORT"); if !ok {
 		log.Fatalf("init config error: %s", whereami.WhereAmI())
 	}
 }

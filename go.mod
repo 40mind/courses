@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/BurntSushi/toml v1.2.0
 	github.com/google/uuid v1.3.0
-	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/sessions v1.2.1
 	github.com/jimlawless/whereami v0.0.0-20221005024011-c4ed4c6119d7
@@ -15,7 +14,4 @@ require (
 	gopkg.in/guregu/null.v4 v4.0.0
 )
 
-require (
-	github.com/felixge/httpsnoop v1.0.1 // indirect
-	github.com/gorilla/securecookie v1.1.1 // indirect
-)
+require github.com/gorilla/securecookie v1.1.1 // indirect

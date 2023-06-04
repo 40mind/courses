@@ -10,8 +10,8 @@ import (
 )
 
 func InitRepository(dbConfig models.DB) *repository.Repository {
-	connectionString := "postgres://" + dbConfig.User + ":" + dbConfig.Password + "@" + dbConfig.Host +
-		":" + dbConfig.Port + "/" + dbConfig.Name + "?sslmode=disable"
+	connectionString := "postgresql://" + dbConfig.User + ":" + dbConfig.Password + "@" + dbConfig.Host +
+		dbConfig.Port + "/" + dbConfig.Name + dbConfig.ModeString
 
 	db, err := sql.Open(dbConfig.Driver, connectionString)
 	if err != nil {

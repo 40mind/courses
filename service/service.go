@@ -303,6 +303,7 @@ func (s *Service) CreatePayment(ctx context.Context, id int, redirectHost string
 func (s *Service) ConfirmPayment(ctx context.Context, id int) (error, int) {
     student, err := s.Repository.GetStudent(ctx, id)
     if err != nil {
+        log.Printf("%s: %s: %s\n", serviceError, err.Error(), whereami.WhereAmI())
         return err, http.StatusInternalServerError
     }
 
@@ -312,11 +313,13 @@ func (s *Service) ConfirmPayment(ctx context.Context, id int) (error, int) {
 
     course, err := s.Repository.GetCourse(ctx, int(student.CourseId.Int64))
     if err != nil {
+        log.Printf("%s: %s: %s\n", serviceError, err.Error(), whereami.WhereAmI())
         return err, http.StatusInternalServerError
     }
 
     paymentResp, err := s.YookassaProvider.GetPayment(student.YookassaUuid.String)
     if err != nil {
+        log.Printf("%s: %s: %s\n", serviceError, err.Error(), whereami.WhereAmI())
         return err, http.StatusInternalServerError
     }
     if paymentResp.Status.String != "succeeded" {
@@ -325,6 +328,7 @@ func (s *Service) ConfirmPayment(ctx context.Context, id int) (error, int) {
 
     err = s.Repository.ConfirmPayment(ctx, id)
     if err != nil {
+        log.Printf("%s: %s: %s\n", serviceError, err.Error(), whereami.WhereAmI())
         return err, http.StatusInternalServerError
     }
 
@@ -332,6 +336,7 @@ func (s *Service) ConfirmPayment(ctx context.Context, id int) (error, int) {
         student.CourseName.String, student.Surname.String + " " + student.Name.String + " " + student.Patronymic.String,
         course.FirstClassDate.Time.Format("02.01.2006"), student.Email.String)
     if err != nil {
+        log.Printf("%s: %s: %s\n", serviceError, err.Error(), whereami.WhereAmI())
         return err, http.StatusInternalServerError
     }
 

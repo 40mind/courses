@@ -18,6 +18,7 @@ type Application struct {
 
 type Server struct {
 	Scheme          string
+	Ip              string
 	Host            string
 	Port			string
 }
@@ -33,6 +34,7 @@ type DB struct {
 	Driver			string
 	Host			string
 	Port			string
+	ModeString      string
 }
 
 type Email struct {

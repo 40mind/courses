@@ -9,7 +9,7 @@ import (
 func InitEmailSender(config models.Email) infrastructure.EmailSender {
     return infrastructure.EmailSender{
         From:       config.From,
-        Auth:       smtp.PlainAuth(config.From, config.From, config.Password, config.Host),
+        Auth:       smtp.PlainAuth("", config.From, config.Password, config.Host),
         Host:       config.Host,
         Port:       config.Port,
     }

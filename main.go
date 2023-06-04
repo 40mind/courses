@@ -27,13 +27,13 @@ func main() {
 	initAdmin(config, svc)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{config.Server.Host, config.Server.Host + config.Server.Port},
+		AllowedOrigins: []string{config.Server.Host},
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodPatch, http.MethodDelete, http.MethodOptions},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 	})
 
 	log.Printf("server started on port %s\n", config.Server.Port)
-	log.Fatal(http.ListenAndServe(config.Server.Host + config.Server.Port, c.Handler(r)))
+	log.Fatal(http.ListenAndServe(config.Server.Ip + ":" + config.Server.Port, c.Handler(r)))
 }
 
 func initAdmin(conf models.Config, svc *service.Service) {

@@ -42,16 +42,22 @@ function adminButton() {
 }
 
 function printAdmins(elems_table, info) {
-    if (info !== null){
-        let table_head = document.querySelector("thead");
-        if (table_head !== null) {
-            elems_table.removeChild(table_head);
-        }
+    let table_head = document.querySelector("thead");
+    if (table_head !== null) {
+        elems_table.removeChild(table_head);
+    }
 
+    let table_body = document.querySelector("tbody");
+    if (table_body !== null) {
+        elems_table.removeChild(table_body);
+    }
+
+    if (info !== null){
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
                             <th scope="col">#</th>
-                            <th scope="col" colspan="3">Логин</th>
+                            <th scope="col">Логин</th>
+                            <th scope="col"></th>
                         </tr>`;
         elems_table.appendChild(table_head_elem);
 
@@ -59,11 +65,6 @@ function printAdmins(elems_table, info) {
         if (no_records_elem !== null) {
             let struct_list = document.getElementById("struct_list");
             struct_list.removeChild(no_records_elem);
-        }
-
-        let table_body = document.querySelector("tbody");
-        if (table_body !== null) {
-            elems_table.removeChild(table_body);
         }
 
         let table_body_elem = document.createElement("tbody");
@@ -283,21 +284,28 @@ function editorButton() {
 }
 
 function printEditors(elems_table, info) {
+    let table_head = document.querySelector("thead");
+    if (table_head !== null) {
+        elems_table.removeChild(table_head);
+    }
+
+    let table_body = document.querySelector("tbody");
+    if (table_body !== null) {
+        elems_table.removeChild(table_body);
+    }
+
     if (info !== null){
         fetch(`/api/v1/admin/courses`)
             .then(response => {
                 if (response.status === 200) {
                     response.json().then(courses => {
-                        let table_head = document.querySelector("thead");
-                        if (table_head !== null) {
-                            elems_table.removeChild(table_head);
-                        }
-
                         let table_head_elem = document.createElement("thead");
                         table_head_elem.innerHTML = `<tr>
                             <th scope="col">#</th>
                             <th scope="col">Логин</th>
-                            <th scope="col" colspan="3">Курсы</th>
+                            <th scope="col">Курсы</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
                         </tr>`;
                         elems_table.appendChild(table_head_elem);
 
@@ -305,11 +313,6 @@ function printEditors(elems_table, info) {
                         if (no_records_elem !== null) {
                             let struct_list = document.getElementById("struct_list");
                             struct_list.removeChild(no_records_elem);
-                        }
-
-                        let table_body = document.querySelector("tbody");
-                        if (table_body !== null) {
-                            elems_table.removeChild(table_body);
                         }
 
                         let table_body_elem = document.createElement("tbody");
@@ -696,16 +699,23 @@ function directionsButton() {
 }
 
 function printDirections(elems_table, info) {
-    if (info !== null){
-        let table_head = document.querySelector("thead");
-        if (table_head !== null) {
-            elems_table.removeChild(table_head);
-        }
+    let table_head = document.querySelector("thead");
+    if (table_head !== null) {
+        elems_table.removeChild(table_head);
+    }
 
+    let table_body = document.querySelector("tbody");
+    if (table_body !== null) {
+        elems_table.removeChild(table_body);
+    }
+
+    if (info !== null){
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>
-            <th scope="col" colspan="3">Направление</th>
+            <th scope="col">Направление</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
         </tr>`;
         elems_table.appendChild(table_head_elem);
 
@@ -713,11 +723,6 @@ function printDirections(elems_table, info) {
         if (no_records_elem !== null) {
             let struct_list = document.getElementById("struct_list");
             struct_list.removeChild(no_records_elem);
-        }
-
-        let table_body = document.querySelector("tbody");
-        if (table_body !== null) {
-            elems_table.removeChild(table_body);
         }
 
         let table_body_elem = document.createElement("tbody");
@@ -1011,12 +1016,17 @@ function courseButton() {
 }
 
 function printCourses(elems_table, info) {
-    if (info !== null){
-        let table_head = document.querySelector("thead");
-        if (table_head !== null) {
-            elems_table.removeChild(table_head);
-        }
+    let table_head = document.querySelector("thead");
+    if (table_head !== null) {
+        elems_table.removeChild(table_head);
+    }
 
+    let table_body = document.querySelector("tbody");
+    if (table_body !== null) {
+        elems_table.removeChild(table_body);
+    }
+
+    if (info !== null){
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>
@@ -1028,7 +1038,9 @@ function printCourses(elems_table, info) {
             <th scope="col">Дата последнего занятия</th>
             <th scope="col">Цена</th>
             <th scope="col">Направление</th>
-            <th scope="col" colspan="3">Информация</th>
+            <th scope="col">Информация</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
         </tr>`;
 
         elems_table.appendChild(table_head_elem);
@@ -1038,29 +1050,19 @@ function printCourses(elems_table, info) {
             struct_list.removeChild(no_records_elem);
         }
 
-        let table_body = document.querySelector("tbody");
-        if (table_body !== null) {
-            elems_table.removeChild(table_body);
-        }
-
         let table_body_elem = document.createElement("tbody");
         for (let i = 0; i < info.length; i++) {
-            let first_date = new Date(info[i].first_class_date);
-            let f = Intl.DateTimeFormat("ru", {year: "numeric", month: "numeric", day: "numeric"}).format(first_date);
-            let last_date = new Date(info[i].last_class_date);
-            let l = Intl.DateTimeFormat("ru", {year: "numeric", month: "numeric", day: "numeric"}).format(last_date);
-
             let elem = document.createElement("tr");
             elem.innerHTML = `<th scope="col">${i + 1}</th>
                 <th scope="col">${info[i].name}</th>
                 <td>${info[i].num_of_classes}</td>
                 <td>${info[i].class_time}</td>
                 <td>${info[i].week_days}</td>
-                <td>${f}</td>
-                <td>${l}</td>
+                <td>${info[i].first_class_date.slice(8, 10) + "." + info[i].first_class_date.slice(5, 7) + "." + info[i].first_class_date.slice(0, 4)}</td>
+                <td>${info[i].last_class_date.slice(8, 10) + "." + info[i].last_class_date.slice(5, 7) + "." + info[i].last_class_date.slice(0, 4)}</td>
                 <td>${info[i].price} рублей</td>
                 <td>${info[i].direction_name}</td>
-                <td>${(info[i].info !== null) ? info[i].info : ""}<td>
+                <td>${(info[i].info !== null) ? info[i].info : ""}</td>
                 <td width="1%"><button class="btn btn-primary btn-sm" type="button" onclick="updateModalCourse(${info[i].id})">Редактировать</button></td>
                 <td width="1%"><button class="btn btn-danger btn-sm" type="button" onclick="deleteCourse(${info[i].id})">Удалить</button></td>`;
             table_body_elem.appendChild(elem);
@@ -1536,12 +1538,17 @@ function studentButton() {
 }
 
 function printStudents(elems_table, info) {
-    if (info !== null){
-        let table_head = document.querySelector("thead");
-        if (table_head !== null) {
-            elems_table.removeChild(table_head);
-        }
+    let table_head = document.querySelector("thead");
+    if (table_head !== null) {
+        elems_table.removeChild(table_head);
+    }
 
+    let table_body = document.querySelector("tbody");
+    if (table_body !== null) {
+        elems_table.removeChild(table_body);
+    }
+
+    if (info !== null){
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>
@@ -1553,7 +1560,9 @@ function printStudents(elems_table, info) {
             <th scope="col">Оплата</th>
             <th scope="col">Дата оплаты</th>
             <th scope="col">Курс</th>
-            <th scope="col" colspan="3">Комментарий</th>
+            <th scope="col">Комментарий</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
         </tr>`;
 
         elems_table.appendChild(table_head_elem);
@@ -1563,16 +1572,8 @@ function printStudents(elems_table, info) {
             struct_list.removeChild(no_records_elem);
         }
 
-        let table_body = document.querySelector("tbody");
-        if (table_body !== null) {
-            elems_table.removeChild(table_body);
-        }
-
         let table_body_elem = document.createElement("tbody");
         for (let i = 0; i < info.length; i++) {
-            let date_of_payment = new Date(info[i].date_of_payment);
-            let p = Intl.DateTimeFormat("ru", {year: "numeric", month: "numeric", day: "numeric"}).format(date_of_payment);
-
             let elem = document.createElement("tr");
             elem.innerHTML = `<th scope="col">${i + 1}</th>
                 <td>${info[i].surname === null ? "" : info[i].surname}</th>
@@ -1581,7 +1582,7 @@ function printStudents(elems_table, info) {
                 <td>${info[i].email === null ? "" : info[i].email}</td>
                 <td>${info[i].phone === null ? "" : info[i].phone}</td>
                 <td>${info[i].payment === null || info[i].payment === false ? "Нет" : "Да"}</td>
-                <td>${info[i].date_of_payment === null ? "" : p}</td>
+                <td>${info[i].date_of_payment === null ? "" : info[i].date_of_payment.slice(8, 10) + "." + info[i].date_of_payment.slice(5, 7) + "." + info[i].date_of_payment.slice(0, 4)}</td>
                 <td>${info[i].course_name === null ? "" : info[i].course_name}</td>
                 <td>${info[i].comment === null ? "" : info[i].comment}</td>
                 <td width="1%"><button class="btn btn-primary btn-sm" type="button" onclick="updateModalStudent(${info[i].id})">Редактировать</button></td>

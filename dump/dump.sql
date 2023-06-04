@@ -51,26 +51,6 @@ create table if not exists graduate_work.students
     course int references graduate_work.courses (id) on delete cascade
 );
 
--- create role administrator;
--- grant connect on database courses to administrator;
--- grant all privileges on schema graduate_work to administrator;
---
--- create role web_app;
--- grant connect on database courses to web_app;
--- grant usage on schema graduate_work to web_app;
--- grant execute on all functions in schema graduate_work to web_app;
--- grant select on all tables in schema graduate_work to web_app;
--- grant insert on all tables in schema graduate_work to web_app;
--- grant update on all tables in schema graduate_work to web_app;
--- grant delete on all tables in schema graduate_work to web_app;
--- grant usage on all sequences in schema graduate_work to web_app;
---
--- create user admin_ivan with password 'ivanbestadmin';
--- grant administrator to admin_ivan;
---
--- create user courses_web_app with password 'passwordforwebapp';
--- grant web_app to courses_web_app;
-
 create or replace function graduate_work.create_admin(_login varchar, _password varchar)
     returns void
     language plpgsql as

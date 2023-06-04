@@ -325,10 +325,10 @@ func (rep *Repository) GetStudent(ctx context.Context, id int) (models.Student, 
 }
 
 func (rep *Repository) UpdateStudent(ctx context.Context, student models.Student) error {
-    query := "SELECT * FROM graduate_work.update_student($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)"
+    query := "SELECT * FROM graduate_work.update_student($1, $2, $3, $4, $5, $6, $7, $8, $9)"
 
     _, err := rep.DB.ExecContext(ctx, query, student.Id, student.Name, student.Surname, student.Patronymic, student.Email,
-        student.Phone, student.Comment, student.Payment, student.PaymentUuid, student.YookassaUuid, student.DateOfPayment)
+        student.Phone, student.Comment, student.Payment, student.DateOfPayment)
     if err != nil {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return fmt.Errorf(DBError)
@@ -364,7 +364,13 @@ func (rep *Repository) SetPaymentUuid(ctx context.Context, id int, paymentUuid, 
 func (rep *Repository) ConfirmPayment(ctx context.Context, id int) error {
     query := `SELECT * FROM graduate_work.confirm_payment($1, $2)`
 
-    _, err := rep.DB.ExecContext(ctx, query, id, time.Now())
+    location, err := time.LoadLocation("Europe/Moscow")
+    if err != nil {
+        log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
+        return err
+    }
+
+    _, err = rep.DB.ExecContext(ctx, query, id, time.Now().In(location))
     if err != nil {
         log.Printf("%s: %s: %s\n", DBError, err.Error(), whereami.WhereAmI())
         return fmt.Errorf(DBError)

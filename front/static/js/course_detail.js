@@ -24,11 +24,6 @@ if (course_id === null) {
 }
 
 function printCourse(info) {
-    let first_date = new Date(info.first_class_date);
-    let f = Intl.DateTimeFormat("ru", {year: "numeric", month: "numeric", day: "numeric"}).format(first_date);
-    let last_date = new Date(info.last_class_date);
-    let l = Intl.DateTimeFormat("ru", {year: "numeric", month: "numeric", day: "numeric"}).format(last_date);
-
     let card_body = document.getElementById("card_body");
     card_body.innerHTML = `<h3 class="card-title text-center">${info.name}</h3>
                             <table class="table">
@@ -51,7 +46,8 @@ function printCourse(info) {
                                     </tr>
                                     <tr>
                                         <th scope="row">Даты проведения курса</th>
-                                        <td>${f} - ${l}</td>
+                                        <td>${info[i].first_class_date.slice(8, 10) + "." + info[i].first_class_date.slice(5, 7) + "." + info[i].first_class_date.slice(0, 4)} - 
+                                            ${info[i].last_class_date.slice(8, 10) + "." + info[i].last_class_date.slice(5, 7) + "." + info[i].last_class_date.slice(0, 4)}</td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -165,7 +165,7 @@ func (c *Controller) ConfirmPayment(w http.ResponseWriter, r *http.Request) {
     id, err := strconv.Atoi(splitURL[len(splitURL)-1])
     if err != nil {
         log.Printf("%s: %s: %s\n", badRequest, err.Error(), whereami.WhereAmI())
-        writeResponse(w, nil, err, http.StatusInternalServerError)
+        writeResponse(w, nil, err, http.StatusBadRequest)
         return
     }
 
