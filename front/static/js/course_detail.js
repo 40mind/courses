@@ -46,8 +46,8 @@ function printCourse(info) {
                                     </tr>
                                     <tr>
                                         <th scope="row">Даты проведения курса</th>
-                                        <td>${info[i].first_class_date.slice(8, 10) + "." + info[i].first_class_date.slice(5, 7) + "." + info[i].first_class_date.slice(0, 4)} - 
-                                            ${info[i].last_class_date.slice(8, 10) + "." + info[i].last_class_date.slice(5, 7) + "." + info[i].last_class_date.slice(0, 4)}</td>
+                                        <td>${info.first_class_date.slice(8, 10) + "." + info.first_class_date.slice(5, 7) + "." + info.first_class_date.slice(0, 4)} - 
+                                            ${info.last_class_date.slice(8, 10) + "." + info.last_class_date.slice(5, 7) + "." + info.last_class_date.slice(0, 4)}</td>
                                     </tr>
                                 </tbody>
                             </table>

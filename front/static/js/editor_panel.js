@@ -10,6 +10,13 @@ fetch(`/api/v1/editor`)
     });
 
 function courseButton() {
+    let buttons = document.querySelectorAll(".list-group-item");
+    for (let b of buttons) {
+        b.className = "list-group-item list-group-item-action";
+    }
+    let activeButton = document.getElementById("course_button");
+    activeButton.className += " active";
+
     let searchButton = document.getElementById("search_button");
     searchButton.setAttribute("onclick", "searchCourse()");
 
@@ -53,6 +60,7 @@ function printCourses(elems_table, info) {
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>
+            <th scope="col">ID</th>
             <th scope="col">Курс</th>
             <th scope="col">Кол-во занятий</th>
             <th scope="col">Длительность занятия</th>
@@ -76,7 +84,8 @@ function printCourses(elems_table, info) {
         for (let i = 0; i < info.length; i++) {
             let elem = document.createElement("tr");
             elem.innerHTML = `<th scope="col">${i + 1}</th>
-                <th scope="col">${info[i].name}</th>
+                <td>${info[i].id}</td>
+                <td>${info[i].name}</td>
                 <td>${info[i].num_of_classes}</td>
                 <td>${info[i].class_time}</td>
                 <td>${info[i].week_days}</td>
@@ -294,6 +303,14 @@ function searchCourse() {
 }
 
 function studentButton() {
+    let buttons = document.querySelectorAll(".list-group-item");
+    for (let b of buttons) {
+        b.className = "list-group-item list-group-item-action";
+    }
+    let activeButton = document.getElementById("student_button");
+    activeButton.className += " active";
+
+
     let searchButton = document.getElementById("search_button");
     searchButton.setAttribute("onclick", "searchStudent()");
 
@@ -360,6 +377,7 @@ function printStudents(elems_table, info) {
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>
+            <th scope="col">ID</th>
             <th scope="col">Фамилия</th>
             <th scope="col">Имя</th>
             <th scope="col">Отчество</th>
@@ -369,8 +387,7 @@ function printStudents(elems_table, info) {
             <th scope="col">Дата оплаты</th>
             <th scope="col">Курс</th>
             <th scope="col">Комментарий</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
+            <th scope="col" colspan="2"></th>
         </tr>`;
 
         elems_table.appendChild(table_head_elem);
@@ -384,7 +401,8 @@ function printStudents(elems_table, info) {
         for (let i = 0; i < info.length; i++) {
             let elem = document.createElement("tr");
             elem.innerHTML = `<th scope="col">${i + 1}</th>
-                <td>${info[i].surname === null ? "" : info[i].surname}</th>
+                <td>${info[i].id}</td>
+                <td>${info[i].surname === null ? "" : info[i].surname}</td>
                 <td>${info[i].name === null ? "" : info[i].name}</td>
                 <td>${info[i].patronymic === null ? "" : info[i].patronymic}</td>
                 <td>${info[i].email === null ? "" : info[i].email}</td>

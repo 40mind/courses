@@ -73,15 +73,15 @@ function printCourses(courses_row, info) {
         for (let course of info.courses) {
             let elem = document.createElement("div");
             elem.className = "col course";
-            elem.innerHTML = `<div class="card">
+            elem.innerHTML = `<div class="card h-100">
                         <div class="card-body">
                             <h5 class="card-title">${course.name}</h5>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">Направление: ${course.direction_name}</li>
                                 <li class="list-group-item">Цена: ${course.price}</li>
-                                <a class="btn btn-primary" href="/course/${course.id}" role="button">Подробнее</a>
                             </ul>
                         </div>
+                        <a class="btn btn-primary rounded-top-0" href="/course/${course.id}" role="button">Подробнее</a>
                     </div>`;
             courses_row.appendChild(elem);
         }
