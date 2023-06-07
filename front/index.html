@@ -20,18 +20,18 @@
     </nav>
     <div class="toast-container top-0 end-0 p-3 position-fixed position-fixed"></div>
     <div class="container mb-4">
-        <div class="row row-cols-3 justify-content-center">
-            <div class="col-2">
-                <select id="select_direction" class="form-select" aria-label="Направление">
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <select id="select_direction" class="form-select mb-2" aria-label="Направление">
                     <option selected value="-1">&#60;Направление&#62;</option>
                 </select>
             </div>
-            <div class="col-6">
+            <div class="col col-md-5">
                 <form class="d-flex" role="search">
                     <input id="search_string" class="form-control me-2" type="search" placeholder="Поиск" aria-label="Поиск">
                 </form>
             </div>
-            <div class="col-1">
+            <div class="col-auto">
                 <button class="btn btn-outline-primary" type="submit" onclick="searchButton()">Поиск</button>
             </div>
         </div>
