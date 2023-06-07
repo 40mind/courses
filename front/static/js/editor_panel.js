@@ -57,6 +57,8 @@ function printCourses(elems_table, info) {
     }
 
     if (info !== null){
+        info.sort((x, y) => x.id - y.id);
+
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>
@@ -374,6 +376,8 @@ function printStudents(elems_table, info) {
     }
 
     if (info !== null){
+        info.sort((x, y) => x.id - y.id);
+
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>

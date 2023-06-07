@@ -22,6 +22,7 @@ fetch("/api/v1")
             response.json().then(info => {
                 let direction_select = document.getElementById("select_direction");
                 if (info.directions !== null) {
+                    info.directions.sort((x, y) => x.name.localeCompare(y.name));
                     for (let direction of info.directions) {
                         let elem = document.createElement("option");
                         elem.innerText = direction.name;
@@ -65,6 +66,8 @@ function searchButton() {
 
 function printCourses(courses_row, info) {
     if (info.courses !== null){
+        info.courses.sort((x, y) => x.name.localeCompare(y.name));
+
         let no_courses_elem = document.getElementById("no_courses_found");
         if (no_courses_elem !== null) {
             document.body.removeChild(no_courses_elem);

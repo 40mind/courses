@@ -60,6 +60,8 @@ function printAdmins(elems_table, info) {
     }
 
     if (info !== null){
+        info.sort((x, y) => x.id - y.id);
+
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
                             <th scope="col">#</th>
@@ -311,6 +313,8 @@ function printEditors(elems_table, info) {
     }
 
     if (info !== null){
+        info.sort((x, y) => x.id - y.id);
+
         fetch(`/api/v1/admin/courses`)
             .then(response => {
                 if (response.status === 200) {
@@ -331,6 +335,7 @@ function printEditors(elems_table, info) {
                             struct_list.removeChild(no_records_elem);
                         }
 
+                        courses.sort((x, y) => x.id - y.id);
                         let table_body_elem = document.createElement("tbody");
                         for (let i = 0; i < info.length; i++) {
                             let result_courses = []
@@ -439,6 +444,7 @@ function createModalEditor() {
                     </div>`
                     struct_list.appendChild(modal_elem);
 
+                    courses.sort((x, y) => x.id - y.id);
                     let select_elem = document.querySelector("select");
                     for (let course of courses) {
                         let option_elem = document.createElement("option");
@@ -581,6 +587,7 @@ function updateModalEditor(id) {
                                     </div>`
                                     struct_list.appendChild(modal_elem);
 
+                                    courses.sort((x, y) => x.id - y.id);
                                     let select_elem = document.querySelector("select");
                                     for (let course of courses) {
                                         let option_elem = document.createElement("option");
@@ -734,6 +741,8 @@ function printDirections(elems_table, info) {
     }
 
     if (info !== null){
+        info.sort((x, y) => x.id - y.id);
+
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>
@@ -1059,6 +1068,8 @@ function printCourses(elems_table, info) {
     }
 
     if (info !== null){
+        info.sort((x, y) => x.id - y.id);
+
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>
@@ -1211,6 +1222,7 @@ function createModalCourse() {
                     </div>`
                     struct_list.appendChild(modal_elem);
 
+                    direction_response.sort((x, y) => x.id - y.id);
                     let select_elem = document.querySelector("select");
                     for (let direction of direction_response) {
                         let option_elem = document.createElement("option");
@@ -1387,6 +1399,7 @@ function updateModalCourse(id) {
                                     </div>`
                                     struct_list.appendChild(modal_elem);
 
+                                    direction_response.sort((x, y) => x.id - y.id);
                                     let select_elem = document.querySelector("select");
                                     for (let direction of direction_response) {
                                         let option_elem = document.createElement("option");
@@ -1542,6 +1555,7 @@ function studentButton() {
                             <option selected value="-1">&#60;Курс&#62;</option>
                         </select>`;
                         let select_course = document.getElementById("select_course");
+                        info.sort((x, y) => x.id - y.id);
                         for (let course of info) {
                             let elem = document.createElement("option");
                             elem.innerText = course.name;
@@ -1589,6 +1603,8 @@ function printStudents(elems_table, info) {
     }
 
     if (info !== null){
+        info.sort((x, y) => x.id - y.id);
+
         let table_head_elem = document.createElement("thead");
         table_head_elem.innerHTML = `<tr>
             <th scope="col">#</th>
